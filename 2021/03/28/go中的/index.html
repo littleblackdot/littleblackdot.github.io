@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>void初识 | LittleBlackDot</title>
+  <title>go中的... | LittleBlackDot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="&amp;nbsp;">
+  <meta name="description" content="“…”的一些用法&amp;nbsp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="void初识">
-<meta property="og:url" content="http://example.com/2021/01/28/void%E5%88%9D%E8%AF%86/index.html">
+<meta property="og:title" content="go中的...">
+<meta property="og:url" content="http://example.com/2021/03/28/go%E4%B8%AD%E7%9A%84/index.html">
 <meta property="og:site_name" content="LittleBlackDot">
-<meta property="og:description" content="&amp;nbsp;">
+<meta property="og:description" content="“…”的一些用法&amp;nbsp;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-01-28T12:13:13.000Z">
-<meta property="article:modified_time" content="2021-01-30T04:06:03.801Z">
+<meta property="article:published_time" content="2021-03-28T09:55:46.000Z">
+<meta property="article:modified_time" content="2021-03-28T10:53:00.361Z">
 <meta property="article:author" content="LittleBlackDot">
 <meta name="twitter:card" content="summary">
   
@@ -157,61 +157,37 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-void初识" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-go中的" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      void初识
+      go中的...
     </h1>
   
 
         
-        <a href="/2021/01/28/void%E5%88%9D%E8%AF%86/" class="archive-article-date">
-  	<time datetime="2021-01-28T12:13:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-28</time>
+        <a href="/2021/03/28/go%E4%B8%AD%E7%9A%84/" class="archive-article-date">
+  	<time datetime="2021-03-28T09:55:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-28</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>&nbsp;    </p>
+        <p> “…”的一些用法&nbsp;    </p>
 <a id="more"></a>
-<p>参考文章:<a target="_blank" rel="noopener" href="https://www.iteye.com/blog/zhengdl126-1739165">https://www.iteye.com/blog/zhengdl126-1739165</a></p>
-<p>  void最初接触当然是在学C的时候，见到的用法就是指明函数无需返回指，在学校计算机系统基础课的malloc_lab(CSAPP里的)里，大量的用到了void类型的指针，在做实验的时候了解了一下void的用法；</p>
-<p>首先当然是百度后看前辈们的分享的知识；</p>
-<h4 id="void用法"><a href="#void用法" class="headerlink" title="void用法:"></a>void用法:</h4><ol>
-<li>如果函数没有返回值，那么应声明为void类型;</li>
-<li>如果函数无参数，那么应声明其参数为void；</li>
-<li>如果函数的参数可以是任意类型指针，那么应声明其参数为void * ；</li>
-<li>void不能代表一个真实的变量；</li>
-</ol>
-<hr>
-<h4 id="void-使用注意事项："><a href="#void-使用注意事项：" class="headerlink" title="void*使用注意事项："></a>void*使用注意事项：</h4><ol>
-<li>任何类型的指针都可以直接赋值给void* 类型变量；但是，void * 类型的变量作为右值赋给任意类型指针变量时要做类型转换。因为“无类型”可以包容“有类型”，而“有类型”则不能包容“无类型”；</li>
-</ol>
-<p>e.g.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int a &#x3D; 0;</span><br><span class="line">int *p &#x3D; &amp;a;</span><br><span class="line">void *vp &#x3D; NULL;</span><br><span class="line">p &#x3D; (int *)vp;</span><br><span class="line">vp &#x3D; p; </span><br></pre></td></tr></table></figure>
-<p>在网上百度看一种说法，NULL是((void *) 0),的宏,依据是stdio.h里的声明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#ifndef NULL</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">#define NULL    0</span><br><span class="line">#else  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#define NULL    ((void *)0)</span><br><span class="line">#endif  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#endif  &#x2F;* NULL *&#x2F;</span><br></pre></td></tr></table></figure>
-<p>我在看到这个解释的时候是产生了一些误解的·，因为NULL是可以赋给任意类型的指针变量的，但是void*类型需要经过类型转换才能赋给相应的指针类型变量的，这个点困扰了我小半天，最后发现，NULL一般是 0 的宏定义。其实stdio.h里的声明写的也很清楚，如果NULL没有被声明，则NULL是0的宏，否则是((void *)0)。只怪自己不认真看声明，在百度里看到一个不知是否正确的结论就拿来用。<br>2. 如果函数没有返回值，那么应声明为void类型;</p>
-<p>   在C语言中，凡不加返回值类型限定的函数，就会被编译器作为返回整型值处理。</p>
-<p>如果函数无参数,那么应声明其参数为void</p>
-<p>在C++语言中声明一个这样的函数：<br>int function(void)<br>{<br>return 1;<br>}</p>
-<p> 则进行下面的调用是不合法的：<br>function(2);</p>
-<p>　　因为在C++中，函数参数为void的意思是这个函数不接受任何参数。</p>
-<p>　　我们在Turbo C 2.0中编译：<br>#include “stdio.h”<br>fun()<br>{<br>return 1;<br>}<br>main()<br>{<br>printf(“%d”,fun(2));<br>getchar();<br>}</p>
-<p>　　编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++</p>
-<p>中，不能向无参数的函数传送任何参数，出错提示“’fun’ : function does not take 1 parameters”。</p>
-<p>　　所以，无论在C还是C++中，若函数不接受任何参数，一定要指明参数为void。</p>
-<ol start="3">
-<li><p>void不能代表一个真实的变量</p>
-<p>void a; //错误<br>function(void a); //错误</p>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>正如博主所说，void体现了一种抽象,void*我认为很像面向对象里的泛型。面向过程语言也有面向对象的思想，写代码重要的是思想，面向过程也可以写面向对象的东西。</p>
-</li>
-</ol>
+
+
+
+<p>参考博文：<a target="_blank" rel="noopener" href="https://blog.csdn.net/guyan0319/article/details/102481435?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-4.control&amp;dist_request_id=&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-4.control">https://blog.csdn.net/guyan0319/article/details/102481435?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-4.control&amp;dist_request_id=&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-4.control</a></p>
+<h4 id="函数可变数量参数"><a href="#函数可变数量参数" class="headerlink" title="函数可变数量参数"></a>函数可变数量参数</h4><p><code>func append(slice []Type, elems ...Type) []Type</code><br>这是库函数append的声明，参数2就用了这种用法</p>
+<h4 id="将切片元素拆出来，"><a href="#将切片元素拆出来，" class="headerlink" title="将切片元素拆出来，"></a>将切片元素拆出来，</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stooges :&#x3D; []string&#123;&quot;Moe&quot;, &quot;Larry&quot;, &quot;Curly&quot;&#125;</span><br><span class="line">	lang :&#x3D; []string&#123;&quot;php&quot;, &quot;golang&quot;, &quot;java&quot;&#125;</span><br><span class="line">	stooges &#x3D; append(stooges, lang...)</span><br><span class="line">	fmt.Println(stooges)</span><br></pre></td></tr></table></figure>
+<p>这里”…”将对应类型的变量从lang切片中拆出来，作为参数传给append</p>
+<h4 id="在数组文字中，…符号指定的长度等于文字中元素的数量"><a href="#在数组文字中，…符号指定的长度等于文字中元素的数量" class="headerlink" title="在数组文字中，…符号指定的长度等于文字中元素的数量"></a>在数组文字中，…符号指定的长度等于文字中元素的数量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stooges :&#x3D; [...]string&#123;&quot;Moe&quot;, &quot;Larry&quot;, &quot;Curly&quot;&#125;</span><br><span class="line">arr :&#x3D; [...]int&#123;1, 2, 3&#125;</span><br></pre></td></tr></table></figure>
+<p>当然这里的“…”不写就是切片的声明，写了就是数组的声明，还是要区别一下，不太一样，可以用append（参数1要求是切片）判断是切片还是数组，其他的方式暂时没发现。。。。。。</p>
 
       
 
@@ -291,7 +267,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/28/void%E5%88%9D%E8%AF%86/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/03/28/go%E4%B8%AD%E7%9A%84/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -305,18 +281,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/03/28/go%E4%B8%AD%E7%9A%84/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          go中的...
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/11/16/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95-%E5%AD%90%E5%88%97%E5%92%8C%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">回溯算法__子列和问题</div>
+    <a href="/2021/01/28/void%E5%88%9D%E8%AF%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">void初识</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -343,7 +310,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#void%E7%94%A8%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">void用法:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#void-%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">void*使用注意事项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">小结</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%8F%AF%E5%8F%98%E6%95%B0%E9%87%8F%E5%8F%82%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">函数可变数量参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%88%87%E7%89%87%E5%85%83%E7%B4%A0%E6%8B%86%E5%87%BA%E6%9D%A5%EF%BC%8C"><span class="toc-number">2.</span> <span class="toc-text">将切片元素拆出来，</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%95%B0%E7%BB%84%E6%96%87%E5%AD%97%E4%B8%AD%EF%BC%8C%E2%80%A6%E7%AC%A6%E5%8F%B7%E6%8C%87%E5%AE%9A%E7%9A%84%E9%95%BF%E5%BA%A6%E7%AD%89%E4%BA%8E%E6%96%87%E5%AD%97%E4%B8%AD%E5%85%83%E7%B4%A0%E7%9A%84%E6%95%B0%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">在数组文字中，…符号指定的长度等于文字中元素的数量</span></a></li></ol>
                     </div>
                 </span>
             </div>
