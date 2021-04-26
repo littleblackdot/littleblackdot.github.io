@@ -16,7 +16,7 @@
 <meta property="og:description" content="&amp;nbsp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-28T12:13:13.000Z">
-<meta property="article:modified_time" content="2021-01-30T04:06:03.801Z">
+<meta property="article:modified_time" content="2021-04-26T11:41:02.767Z">
 <meta property="article:author" content="LittleBlackDot">
 <meta name="twitter:card" content="summary">
   
@@ -203,15 +203,14 @@
 <p> 则进行下面的调用是不合法的：<br>function(2);</p>
 <p>　　因为在C++中，函数参数为void的意思是这个函数不接受任何参数。</p>
 <p>　　我们在Turbo C 2.0中编译：<br>#include “stdio.h”<br>fun()<br>{<br>return 1;<br>}<br>main()<br>{<br>printf(“%d”,fun(2));<br>getchar();<br>}</p>
-<p>　　编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++</p>
-<p>中，不能向无参数的函数传送任何参数，出错提示“’fun’ : function does not take 1 parameters”。</p>
+<p>　　编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++中，不能向无参数的函数传送任何参数，出错提示“’fun’ : function does not take 1 parameters”。</p>
 <p>　　所以，无论在C还是C++中，若函数不接受任何参数，一定要指明参数为void。</p>
 <ol start="3">
 <li><p>void不能代表一个真实的变量</p>
 <p>void a; //错误<br>function(void a); //错误</p>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>正如博主所说，void体现了一种抽象,void*我认为很像面向对象里的泛型。面向过程语言也有面向对象的思想，写代码重要的是思想，面向过程也可以写面向对象的东西。</p>
 </li>
 </ol>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>正如博主所说，void体现了一种抽象,void*我认为很像面向对象里的泛型。面向过程语言也有面向对象的思想，写代码重要的是思想，面向过程也可以写面向对象的东西。</p>
 
       
 
