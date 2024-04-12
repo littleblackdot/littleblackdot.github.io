@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>中缀表达式的计算 | LittleBlackDot</title>
+  <title>设计模式随想 | LittleBlackDot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="&amp;nbsp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="中缀表达式的计算">
-<meta property="og:url" content="http://example.com/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/index.html">
+<meta property="og:title" content="设计模式随想">
+<meta property="og:url" content="http://example.com/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/index.html">
 <meta property="og:site_name" content="LittleBlackDot">
 <meta property="og:description" content="&amp;nbsp;">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-04-23T11:29:12.000Z">
-<meta property="article:modified_time" content="2022-04-23T11:30:18.000Z">
+<meta property="article:published_time" content="2024-04-11T15:28:03.000Z">
+<meta property="article:modified_time" content="2024-04-12T15:32:26.258Z">
 <meta property="article:author" content="LittleBlackDot">
 <meta name="twitter:card" content="summary">
   
@@ -157,20 +157,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-中缀表达式的计算" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-设计模式随想" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      中缀表达式的计算
+      设计模式随想
     </h1>
   
 
         
-        <a href="/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/" class="archive-article-date">
-  	<time datetime="2022-04-23T11:29:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-23</time>
+        <a href="/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/" class="archive-article-date">
+  	<time datetime="2024-04-11T15:28:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-11</time>
 </a>
         
       </header>
@@ -180,23 +180,46 @@
         <p>&nbsp;</p>
 <a id="more"></a>
 
-<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sgbfblog/article/details/8001651">https://blog.csdn.net/sgbfblog/article/details/8001651</a></p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近看面经看到了计算中缀表达式结果这个问题，自己猛的的一想，只想到和栈运用相关， 没啥具体思路， 于是就去查了查，记录下自己的简单实现， 主要还是放个大体思路在这里，方便以后忘了回看。</p>
-<h3 id="具体思路"><a href="#具体思路" class="headerlink" title="具体思路"></a>具体思路</h3><p>中缀表达式是不好直接计算的， 因改先把中缀表达式转换为后缀表达式， 计算后缀表达式在编程上是更好实现的。</p>
-<h4 id="计算后缀表达式的过程"><a href="#计算后缀表达式的过程" class="headerlink" title="计算后缀表达式的过程"></a>计算后缀表达式的过程</h4><p>需要借用一个栈，存放数据， 遍历后缀表达式，遇到数据则入栈， 遇到运算符，连续出栈两个数据， 将两个数据和运算符构成的表达式的计算结果入栈，最后栈中的数据就是整个表达式的结果。</p>
-<h4 id="中缀表达式转后缀表达式"><a href="#中缀表达式转后缀表达式" class="headerlink" title="中缀表达式转后缀表达式"></a>中缀表达式转后缀表达式</h4><p>需要一个栈，存放运算符。遍历中缀表达式，按下面的规则转换：</p>
-<ul>
-<li>如果遇到操作数，我们就直接将其输出到结果表达式中</li>
-<li>遇到运算符（左右括号也看作运算符）<ul>
-<li>遇到右括号 ， 不断将栈中的运算符出栈，并输出到结果表达式中, 直到遇到左括号， 左括号只出栈不输出到结果表达式中。</li>
-<li>遇到左括号直接入栈</li>
-<li>遇到’+’, ‘-‘ 之类的运算符， 若栈顶运算符优先级不小于（大于等于）当前遇到的运算符，则出栈运算符到结果表达式中， 持续这个动作直到栈顶运算符为左括号， 或者栈空。然后将当前遇到的运算符入栈。</li>
-<li>遍历结束后， 若栈不空，将栈中所有元素出栈到结果表达式中。</li>
+<h2 id="如何解决复杂性："><a href="#如何解决复杂性：" class="headerlink" title="如何解决复杂性："></a>如何解决复杂性：</h2><ul>
+<li>分解</li>
+<li>抽象</li>
 </ul>
+<h2 id="软件设计的目标：复用性"><a href="#软件设计的目标：复用性" class="headerlink" title="软件设计的目标：复用性"></a>软件设计的目标：复用性</h2><h2 id="设计模式的一些原则"><a href="#设计模式的一些原则" class="headerlink" title="设计模式的一些原则"></a>设计模式的一些原则</h2><h3 id="依赖倒置原则"><a href="#依赖倒置原则" class="headerlink" title="依赖倒置原则"></a>依赖倒置原则</h3><ul>
+<li>高层模块(稳定)不应该依赖低层(变化)模块，应该依赖抽象</li>
+<li>抽象(稳定)不应该依赖于实现细节(变化)， 实现细节应该依赖抽象</li>
+</ul>
+<h3 id="开闭原则："><a href="#开闭原则：" class="headerlink" title="开闭原则："></a>开闭原则：</h3><ul>
+<li>对拓展开放，对修改封闭，面对新需求尽量不修改或少修改已有代码</li>
+</ul>
+<h3 id="单一职责原则"><a href="#单一职责原则" class="headerlink" title="单一职责原则"></a>单一职责原则</h3><ul>
+<li><p>一个类应该仅有一个引起它变化的原因（减少耦合）</p>
+</li>
+<li><p>变化的方向隐含类的责任</p>
 </li>
 </ul>
-<p>写的思路可能不是那么直观，去看看参考文章，那里有实例， 看过之后就会明白了。。。。。</p>
-<h3 id="用C-简单实现了一下"><a href="#用C-简单实现了一下" class="headerlink" title="用C++简单实现了一下"></a>用C++简单实现了一下</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;string&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int getPriority(char );&#x2F;&#x2F;获取运算符优先级</span><br><span class="line">string convertToSuffix(string); &#x2F;&#x2F;将中缀表达式转化为后缀表达式</span><br><span class="line">double getResult(string); &#x2F;&#x2F;计算后缀表达式获取结果</span><br><span class="line"></span><br><span class="line">int main() &#123; </span><br><span class="line">    string str &#x3D; &quot;1+2*3+(4*5+6)*7&quot;;</span><br><span class="line">    string str2 &#x3D; convertToSuffix(str);</span><br><span class="line">    cout&lt;&lt; getResult(str2) &lt;&lt;endl;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int getPriority(char a)&#123;</span><br><span class="line">    int ret &#x3D; 0;</span><br><span class="line">    switch(a)&#123;</span><br><span class="line">        case &#39;+&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;-&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;*&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;&#x2F;&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;(&#39;: ret &#x3D; 0; break;</span><br><span class="line">        default: break;</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string convertToSuffix(string str)&#123;</span><br><span class="line">    string ret &#x3D; &quot;&quot;;</span><br><span class="line">    stack&lt;char&gt; s;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39; &lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123;&#x2F;&#x2F;0-9直接输出到结果中</span><br><span class="line">            ret +&#x3D; str[i];</span><br><span class="line">        &#125;else if(&#39;(&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到左括号直接入栈</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;else if(&#39;)&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到右括号出栈到左括号</span><br><span class="line">            while(s.top() !&#x3D; &#39;(&#39;)&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.pop();</span><br><span class="line">        &#125;else&#123;&#x2F;&#x2F;碰到运算符， 出栈优先级不小于它的所有运算符在将其入栈</span><br><span class="line">            while(!s.empty() &amp;&amp; getPriority(s.top()) &gt;&#x3D;  getPriority(str[i]))&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    while(!s.empty())&#123;</span><br><span class="line">        ret +&#x3D; s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">double getResult(string str)&#123;</span><br><span class="line">    double ret &#x3D; 0;</span><br><span class="line">    stack&lt;double&gt; s_num;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39;&lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123; &#x2F;&#x2F;遇到数字则入栈</span><br><span class="line">            s_num.push(str[i]-&#39;0&#39;);</span><br><span class="line">        &#125;else&#123; &#x2F;&#x2F;遇到运算符出栈两个数参与运算再把结果入栈</span><br><span class="line">            double temp1; </span><br><span class="line">            double temp2;</span><br><span class="line">            double temp3;</span><br><span class="line">            temp1 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            temp2 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            switch(str[i])&#123;</span><br><span class="line">                case &#39;+&#39;: temp3 &#x3D; temp1 + temp2; break;</span><br><span class="line">                case &#39;-&#39;: temp3 &#x3D; temp1 - temp2; break;</span><br><span class="line">                case &#39;*&#39;: temp3 &#x3D; temp1 * temp2; break;</span><br><span class="line">                case &#39;&#x2F;&#39;: temp3 &#x3D; temp1 &#x2F; temp2; break;</span><br><span class="line">                default: break;</span><br><span class="line">            &#125;</span><br><span class="line">            s_num.push(temp3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return s_num.top();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="里氏替换原则"><a href="#里氏替换原则" class="headerlink" title="里氏替换原则"></a>里氏替换原则</h3><ul>
+<li>子类必须能替换他们的基类（is a）</li>
+<li>public继承表达类型抽象</li>
+</ul>
+<h3 id="接口隔离原则"><a href="#接口隔离原则" class="headerlink" title="接口隔离原则"></a>接口隔离原则</h3><ul>
+<li>接口应该小而完备（谨慎提供对外接口）</li>
+<li>不应该强迫客户程序以来他们不用的方法</li>
+</ul>
+<h3 id="优先使用对象组合，而不是类继承"><a href="#优先使用对象组合，而不是类继承" class="headerlink" title="优先使用对象组合，而不是类继承"></a>优先使用对象组合，而不是类继承</h3><ul>
+<li>类继承为“白盒复用”， 对象组合为“黑盒复用”–屏蔽用户的感知，减少不必要的依赖（耦合）</li>
+<li>继承在某种程度上破坏了封装性，子类父类耦合度高</li>
+<li>对象组合则只要求被组合的对象具有良好定义的接口，耦合相对较低</li>
+</ul>
+<h3 id="封装变化点"><a href="#封装变化点" class="headerlink" title="封装变化点"></a>封装变化点</h3><ul>
+<li>使用封装来创建对象之间的分界层，让设计者可以在分界层的一侧进行修改，而不会对另一侧产生不良的影响，从而实现层次间的松耦合。（一种抽象思维的运用）</li>
+</ul>
+<h3 id="针对接口编程，而不是针对实现编程"><a href="#针对接口编程，而不是针对实现编程" class="headerlink" title="针对接口编程，而不是针对实现编程"></a>针对接口编程，而不是针对实现编程</h3><ul>
+<li>不将变量类型生命为某个特定的具体类，而是声明为某个接口。</li>
+<li>客户程序无需获取对象的具体类型，只需要知道对象所具有的接口（减少客户程序对自身的依赖，降低耦合）</li>
+<li>减少系统中各部分的依赖关系，从而实现“高内聚、低耦合”的类型设计方案</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>以目前的层次来看，设计模式的8大设计模式可以总结为：以减少耦合、降低依赖，使用抽象这几个思想来指导面向对象程序的编写，运用这些思想的目的就是使程序面对变化时，能以较小的程序变更来实现需求的变更，提高程序的复用性、开发效率。</p>
+
       
 
       
@@ -275,7 +298,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -289,18 +312,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          设计模式随想
-        
-      </div>
-    </a>
   
-  
-    <a href="/2022/04/23/%E5%AF%B9C%E4%B8%AD%E5%87%BD%E6%95%B0%E5%90%8D%E5%92%8C%E6%95%B0%E7%BB%84%E5%90%8D%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">对C中函数名和数组名的一些理解</div>
+    <a href="/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">中缀表达式的计算</div>
       <i class="icon-circle-right"></i>
     </a>
   
