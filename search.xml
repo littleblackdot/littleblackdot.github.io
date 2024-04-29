@@ -96,6 +96,36 @@ optimized&gt; ...)</strong></p>
 ]]></content>
   </entry>
   <entry>
+    <title>CSAPP笔记-链接</title>
+    <url>/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>csapp有空会读一下，但是总是断断续续的再读，这样看完的东西太容易忘了，梳理记录一下，加深理解，后面回看的时候也方便快速回忆。</p>
+<h2 id="编译器驱动程序">编译器驱动程序</h2>
+<h3 id="源文件到可执行目标文件的过程">源文件到可执行目标文件的过程</h3>
+<ul>
+<li><span class="math inline">\(main.c(源文件)\xrightarrow{预处理器(cpp)}main.i(中间文件)\xrightarrow{编译器(cc1)}main.s(汇编文件)\xrightarrow{汇编器(as)}\\main.o(可重定位目标文件)\xrightarrow{链接器ld}a.out(可执行目标文件)\)</span></li>
+<li>过程中的工具链
+<ul>
+<li>预处理器：将对代码做一些预处理操作如：宏定义的文本替换，将头文件的内容复制到include处等</li>
+<li>编译器：将.i文件翻译成汇编文件格式为.s，文件内容为可阅读的汇编代码，因为汇编代码与cpu的指令集相关联，所以是不可移植的。</li>
+<li>汇编器：将.s文件翻译成机器码文件，不可阅读（可以使用objdump来将.o文件转换为汇编格式）</li>
+<li>链接器：将多个.o文件链接合并成一个可执行文件，过程中涉及符号解析，重定位。</li>
+</ul></li>
+<li>Linux中可执行目标程序（不依赖动态库）的运行过程
+<ol type="1">
+<li>shell中输入运行可执行文件</li>
+<li>shell调用操作系统加载器(操作系统API--exec函数族也是这个原理)</li>
+<li>加载器将可执行目标文件中的代码和数据复制到内存中</li>
+<li>加载器跳转到程序的入口点(_start函数)，执行_start函数.
+_函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
+<li>_start函数调用系统启动函数
+__libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
+</ol></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>C中的void</title>
     <url>/2022/04/23/C%E4%B8%AD%E7%9A%84void/</url>
     <content><![CDATA[<p> </p>
@@ -167,27 +197,6 @@ parameters”。所以，无论在C还是C++中，若函数不接受任何参数
 ]]></content>
   </entry>
   <entry>
-    <title>CSAPP笔记-链接</title>
-    <url>/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<p>csapp有空会读一下，但是总是断断续续的再读，这样看完的东西太容易忘了，梳理记录一下，加深理解，后面回看的时候也方便快速回忆。
-## 编译器驱动程序</p>
-<h3 id="源文件到可执行目标文件的过程">源文件到可执行目标文件的过程</h3>
-<ul>
-<li><span class="math inline">\(main.c(源文件)\xrightarrow{预处理器(cpp)}main.i(中间文件)\xrightarrow{编译器(cc1)}main.s(汇编文件)\xrightarrow{汇编器(as)}main.o(可重定位目标文件)\xrightarrow{链接器ld}a.out(可执行目标文件)\)</span></li>
-<li>过程中的工具链
-<ul>
-<li>预处理器：将对代码做一些预处理操作如：宏定义的文本替换，将头文件的内容复制到include处等</li>
-<li>编译器：将.i文件翻译成汇编文件格式为.s，文件内容为可阅读的汇编代码，因为汇编代码与cpu的指令集相关联，所以是不可移植的。</li>
-<li>汇编器：将.s文件翻译成机器码文件，不可阅读（可以使用objdump来将.o文件转换为汇编格式）</li>
-<li>链接器：将多个.o文件链接合并成一个可执行文件，过程中涉及符号解析，重定位。</li>
-</ul></li>
-<li>Linux中可执行目标程序（不依赖动态库）的运行过程</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>C中的字符串</title>
     <url>/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
     <content><![CDATA[<p> </p>
@@ -219,13 +228,6 @@ p这个指针变量，</p>
 <p>这里也解释了一种情况，我想要输出单个字符的时候需要用到*p，而不是p.这个点用我之前的想法是解释不通的。</p>
 <p>总结一句话
 ，字符串以数组的形式存在，以数组或指针的形式访问。这个点算是我新的收获了；</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>test</title>
-    <url>/2020/10/11/test/</url>
-    <content><![CDATA[<p> <br>
-<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
 ]]></content>
   </entry>
   <entry>
@@ -366,6 +368,13 @@ mode；否则使用传统的GOPATH mode。</td>
 看过之后就会明白了。。。。。</p>
 <h3 id="用c简单实现了一下">用C++简单实现了一下</h3>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;string&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int getPriority(char );&#x2F;&#x2F;获取运算符优先级</span><br><span class="line">string convertToSuffix(string); &#x2F;&#x2F;将中缀表达式转化为后缀表达式</span><br><span class="line">double getResult(string); &#x2F;&#x2F;计算后缀表达式获取结果</span><br><span class="line"></span><br><span class="line">int main() &#123; </span><br><span class="line">    string str &#x3D; &quot;1+2*3+(4*5+6)*7&quot;;</span><br><span class="line">    string str2 &#x3D; convertToSuffix(str);</span><br><span class="line">    cout&lt;&lt; getResult(str2) &lt;&lt;endl;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int getPriority(char a)&#123;</span><br><span class="line">    int ret &#x3D; 0;</span><br><span class="line">    switch(a)&#123;</span><br><span class="line">        case &#39;+&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;-&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;*&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;&#x2F;&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;(&#39;: ret &#x3D; 0; break;</span><br><span class="line">        default: break;</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string convertToSuffix(string str)&#123;</span><br><span class="line">    string ret &#x3D; &quot;&quot;;</span><br><span class="line">    stack&lt;char&gt; s;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39; &lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123;&#x2F;&#x2F;0-9直接输出到结果中</span><br><span class="line">            ret +&#x3D; str[i];</span><br><span class="line">        &#125;else if(&#39;(&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到左括号直接入栈</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;else if(&#39;)&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到右括号出栈到左括号</span><br><span class="line">            while(s.top() !&#x3D; &#39;(&#39;)&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.pop();</span><br><span class="line">        &#125;else&#123;&#x2F;&#x2F;碰到运算符， 出栈优先级不小于它的所有运算符在将其入栈</span><br><span class="line">            while(!s.empty() &amp;&amp; getPriority(s.top()) &gt;&#x3D;  getPriority(str[i]))&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    while(!s.empty())&#123;</span><br><span class="line">        ret +&#x3D; s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">double getResult(string str)&#123;</span><br><span class="line">    double ret &#x3D; 0;</span><br><span class="line">    stack&lt;double&gt; s_num;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39;&lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123; &#x2F;&#x2F;遇到数字则入栈</span><br><span class="line">            s_num.push(str[i]-&#39;0&#39;);</span><br><span class="line">        &#125;else&#123; &#x2F;&#x2F;遇到运算符出栈两个数参与运算再把结果入栈</span><br><span class="line">            double temp1; </span><br><span class="line">            double temp2;</span><br><span class="line">            double temp3;</span><br><span class="line">            temp1 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            temp2 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            switch(str[i])&#123;</span><br><span class="line">                case &#39;+&#39;: temp3 &#x3D; temp1 + temp2; break;</span><br><span class="line">                case &#39;-&#39;: temp3 &#x3D; temp1 - temp2; break;</span><br><span class="line">                case &#39;*&#39;: temp3 &#x3D; temp1 * temp2; break;</span><br><span class="line">                case &#39;&#x2F;&#39;: temp3 &#x3D; temp1 &#x2F; temp2; break;</span><br><span class="line">                default: break;</span><br><span class="line">            &#125;</span><br><span class="line">            s_num.push(temp3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return s_num.top();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+  </entry>
+  <entry>
+    <title>test</title>
+    <url>/2020/10/11/test/</url>
+    <content><![CDATA[<p> <br>
+<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
 ]]></content>
   </entry>
   <entry>
