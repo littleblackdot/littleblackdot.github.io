@@ -118,11 +118,45 @@ optimized&gt; ...)</strong></p>
 <li>shell调用操作系统加载器(操作系统API--exec函数族也是这个原理)</li>
 <li>加载器将可执行目标文件中的代码和数据复制到内存中</li>
 <li>加载器跳转到程序的入口点(_start函数)，执行_start函数.
-_函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
+_start函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
 <li>_start函数调用系统启动函数
 __libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
 </ol></li>
 </ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>C中的字符串</title>
+    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>下面的内容根据翁凯老师的C语言慕课的内容总结所得：</p>
+<p>字符串：</p>
+<ul>
+<li>以0结尾的一串字符（结尾字符ascii值为0，’\0’的sacii值为0）</li>
+<li>0(‘\0’)标志值符串的结束但它不是字符串的一部分
+<ul>
+<li>计算字符串长度的时候不包含这个0，但是它是占一字节的空间的，具体问题具体分析。</li>
+</ul></li>
+<li>字符串以数组的形式存在，以数组或指针的形式访问</li>
+<li>特殊的一点，字符串字面量可以用来初始化字符数组</li>
+</ul>
+<p>字符串常量：</p>
+<ul>
+<li>形如”hello”</li>
+<li>“hello”会被编译器变成一个字符数组放在某处(rodata段,只读)，这个数组长度是6，结尾有表示结束的0(‘\0’)</li>
+</ul>
+<p>我对字符串的误解是在字符串常量这个点，没有理解C中字符串常量的存储方式</p>
+<p>例如，char *p = “hello”;</p>
+<p>根据一般的指针思想，我把上面的表达式理解为：”hello“代表了一个地址，并把这个地址赋值给
+p这个指针变量，</p>
+<p>我会认为 p = “hello”
+，字符串”hello“被转换成地址的形式，而p的值就是这个地址，复习C语言的时，在实现strcpy考虑参数类型的时候，我想的函数参数类型。和标准库里的不一样，因为这个冲突，我对自己的字符认知产生了怀疑，然后回头再看了一遍翁凯老师的C语言慕课,有了新的收获。</p>
+<p>就如同上面的总结，形如”hello“的值符串常量，会被编译器变成一个数组放在代码段，然后char
+*p = “hello”,语句的效果是，将”hello“所在数组的首地址赋值给p。</p>
+<p>这里也解释了一种情况，我想要输出单个字符的时候需要用到*p，而不是p.这个点用我之前的想法是解释不通的。</p>
+<p>总结一句话
+，字符串以数组的形式存在，以数组或指针的形式访问。这个点算是我新的收获了；</p>
 ]]></content>
   </entry>
   <entry>
@@ -197,37 +231,50 @@ parameters”。所以，无论在C还是C++中，若函数不接受任何参数
 ]]></content>
   </entry>
   <entry>
-    <title>C中的字符串</title>
-    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
+    <title>test</title>
+    <url>/2020/10/11/test/</url>
+    <content><![CDATA[<p> <br>
+<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>中缀表达式的计算</title>
+    <url>/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/</url>
     <content><![CDATA[<p> </p>
 <a id="more"></a>
-<p>下面的内容根据翁凯老师的C语言慕课的内容总结所得：</p>
-<p>字符串：</p>
+<h3 id="参考文章">参考文章</h3>
+<p>https://blog.csdn.net/sgbfblog/article/details/8001651</p>
+<h3 id="前言">前言</h3>
+<p>最近看面经看到了计算中缀表达式结果这个问题，自己猛的的一想，只想到和栈运用相关，
+没啥具体思路， 于是就去查了查，记录下自己的简单实现，
+主要还是放个大体思路在这里，方便以后忘了回看。</p>
+<h3 id="具体思路">具体思路</h3>
+<p>中缀表达式是不好直接计算的， 因改先把中缀表达式转换为后缀表达式，
+计算后缀表达式在编程上是更好实现的。</p>
+<h4 id="计算后缀表达式的过程">计算后缀表达式的过程</h4>
+<p>需要借用一个栈，存放数据， 遍历后缀表达式，遇到数据则入栈，
+遇到运算符，连续出栈两个数据，
+将两个数据和运算符构成的表达式的计算结果入栈，最后栈中的数据就是整个表达式的结果。</p>
+<h4 id="中缀表达式转后缀表达式">中缀表达式转后缀表达式</h4>
+<p>需要一个栈，存放运算符。遍历中缀表达式，按下面的规则转换：</p>
 <ul>
-<li>以0结尾的一串字符（结尾字符ascii值为0，’\0’的sacii值为0）</li>
-<li>0(‘\0’)标志值符串的结束但它不是字符串的一部分
+<li>如果遇到操作数，我们就直接将其输出到结果表达式中</li>
+<li>遇到运算符（左右括号也看作运算符）
 <ul>
-<li>计算字符串长度的时候不包含这个0，但是它是占一字节的空间的，具体问题具体分析。</li>
+<li>遇到右括号 ， 不断将栈中的运算符出栈，并输出到结果表达式中,
+直到遇到左括号， 左括号只出栈不输出到结果表达式中。</li>
+<li>遇到左括号直接入栈</li>
+<li>遇到’+’, ‘-‘ 之类的运算符，
+若栈顶运算符优先级不小于（大于等于）当前遇到的运算符，则出栈运算符到结果表达式中，
+持续这个动作直到栈顶运算符为左括号，
+或者栈空。然后将当前遇到的运算符入栈。</li>
+<li>遍历结束后， 若栈不空，将栈中所有元素出栈到结果表达式中。</li>
 </ul></li>
-<li>字符串以数组的形式存在，以数组或指针的形式访问</li>
-<li>特殊的一点，字符串字面量可以用来初始化字符数组</li>
 </ul>
-<p>字符串常量：</p>
-<ul>
-<li>形如”hello”</li>
-<li>“hello”会被编译器变成一个字符数组放在某处(rodata段,只读)，这个数组长度是6，结尾有表示结束的0(‘\0’)</li>
-</ul>
-<p>我对字符串的误解是在字符串常量这个点，没有理解C中字符串常量的存储方式</p>
-<p>例如，char *p = “hello”;</p>
-<p>根据一般的指针思想，我把上面的表达式理解为：”hello“代表了一个地址，并把这个地址赋值给
-p这个指针变量，</p>
-<p>我会认为 p = “hello”
-，字符串”hello“被转换成地址的形式，而p的值就是这个地址，复习C语言的时，在实现strcpy考虑参数类型的时候，我想的函数参数类型。和标准库里的不一样，因为这个冲突，我对自己的字符认知产生了怀疑，然后回头再看了一遍翁凯老师的C语言慕课,有了新的收获。</p>
-<p>就如同上面的总结，形如”hello“的值符串常量，会被编译器变成一个数组放在代码段，然后char
-*p = “hello”,语句的效果是，将”hello“所在数组的首地址赋值给p。</p>
-<p>这里也解释了一种情况，我想要输出单个字符的时候需要用到*p，而不是p.这个点用我之前的想法是解释不通的。</p>
-<p>总结一句话
-，字符串以数组的形式存在，以数组或指针的形式访问。这个点算是我新的收获了；</p>
+<p>写的思路可能不是那么直观，去看看参考文章，那里有实例，
+看过之后就会明白了。。。。。</p>
+<h3 id="用c简单实现了一下">用C++简单实现了一下</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;string&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int getPriority(char );&#x2F;&#x2F;获取运算符优先级</span><br><span class="line">string convertToSuffix(string); &#x2F;&#x2F;将中缀表达式转化为后缀表达式</span><br><span class="line">double getResult(string); &#x2F;&#x2F;计算后缀表达式获取结果</span><br><span class="line"></span><br><span class="line">int main() &#123; </span><br><span class="line">    string str &#x3D; &quot;1+2*3+(4*5+6)*7&quot;;</span><br><span class="line">    string str2 &#x3D; convertToSuffix(str);</span><br><span class="line">    cout&lt;&lt; getResult(str2) &lt;&lt;endl;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int getPriority(char a)&#123;</span><br><span class="line">    int ret &#x3D; 0;</span><br><span class="line">    switch(a)&#123;</span><br><span class="line">        case &#39;+&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;-&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;*&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;&#x2F;&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;(&#39;: ret &#x3D; 0; break;</span><br><span class="line">        default: break;</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string convertToSuffix(string str)&#123;</span><br><span class="line">    string ret &#x3D; &quot;&quot;;</span><br><span class="line">    stack&lt;char&gt; s;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39; &lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123;&#x2F;&#x2F;0-9直接输出到结果中</span><br><span class="line">            ret +&#x3D; str[i];</span><br><span class="line">        &#125;else if(&#39;(&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到左括号直接入栈</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;else if(&#39;)&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到右括号出栈到左括号</span><br><span class="line">            while(s.top() !&#x3D; &#39;(&#39;)&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.pop();</span><br><span class="line">        &#125;else&#123;&#x2F;&#x2F;碰到运算符， 出栈优先级不小于它的所有运算符在将其入栈</span><br><span class="line">            while(!s.empty() &amp;&amp; getPriority(s.top()) &gt;&#x3D;  getPriority(str[i]))&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    while(!s.empty())&#123;</span><br><span class="line">        ret +&#x3D; s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">double getResult(string str)&#123;</span><br><span class="line">    double ret &#x3D; 0;</span><br><span class="line">    stack&lt;double&gt; s_num;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39;&lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123; &#x2F;&#x2F;遇到数字则入栈</span><br><span class="line">            s_num.push(str[i]-&#39;0&#39;);</span><br><span class="line">        &#125;else&#123; &#x2F;&#x2F;遇到运算符出栈两个数参与运算再把结果入栈</span><br><span class="line">            double temp1; </span><br><span class="line">            double temp2;</span><br><span class="line">            double temp3;</span><br><span class="line">            temp1 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            temp2 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            switch(str[i])&#123;</span><br><span class="line">                case &#39;+&#39;: temp3 &#x3D; temp1 + temp2; break;</span><br><span class="line">                case &#39;-&#39;: temp3 &#x3D; temp1 - temp2; break;</span><br><span class="line">                case &#39;*&#39;: temp3 &#x3D; temp1 * temp2; break;</span><br><span class="line">                case &#39;&#x2F;&#39;: temp3 &#x3D; temp1 &#x2F; temp2; break;</span><br><span class="line">                default: break;</span><br><span class="line">            &#125;</span><br><span class="line">            s_num.push(temp3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return s_num.top();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
   </entry>
   <entry>
@@ -328,53 +375,6 @@ mode；否则使用传统的GOPATH mode。</td>
 <p>……………栈的相关操作就不写了,太占篇幅;</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">typedef struct StackNode&#123;</span><br><span class="line">	int i;&#x2F;&#x2F;当前节点对应数组第i号元素(0开始)</span><br><span class="line">	int x;&#x2F;&#x2F;第i号节点是否被选中</span><br><span class="line">	struct StackNode *next;</span><br><span class="line">&#125;node;&#x2F;&#x2F;结果集节点结构</span><br><span class="line"></span><br><span class="line">node* init();&#x2F;&#x2F;栈初始化</span><br><span class="line">void push(node *, int ,int);</span><br><span class="line">node pop(node *);</span><br><span class="line">int isEmpty(node *);</span><br><span class="line">void Destory(node *);</span><br><span class="line">void sort(int *,int);</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	int n,goal,tg,ti &#x3D; -1,ts &#x3D; 0,h;</span><br><span class="line">	node *top,last;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;goal);</span><br><span class="line">	int a[n];</span><br><span class="line">	int s[n];</span><br><span class="line">	for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">		scanf(&quot;%d&quot;,&amp;a[i]);</span><br><span class="line">		s[i] &#x3D; -1;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(a,n);</span><br><span class="line">	node *plist &#x3D; init();</span><br><span class="line">	tg &#x3D; goal;</span><br><span class="line">	while(1)&#123;	</span><br><span class="line">		if(isEmpty(plist))&#123;&#x2F;&#x2F;栈空时的操作</span><br><span class="line">			if(0 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第二次栈空操作</span><br><span class="line">				push(plist,0,0);</span><br><span class="line">				plist-&gt;i &#x3D; 1;</span><br><span class="line">			&#125;else if(-1 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第一次栈空操作</span><br><span class="line">				if(a[0]&lt;&#x3D;tg)&#123;&#x2F;&#x2F;满足约束条件,取当前节点元素,x置1</span><br><span class="line">					push(plist,0,1);</span><br><span class="line">					plist-&gt;i &#x3D; 0;</span><br><span class="line">					s[0] &#x3D; 1;</span><br><span class="line">					tg -&#x3D; a[plist-&gt;next-&gt;i];</span><br><span class="line">				&#125;else&#123;&#x2F;&#x2F;不满足条件,不取,x置0</span><br><span class="line">					push(plist,0,0);</span><br><span class="line">					plist-&gt;i &#x3D; 1;</span><br><span class="line">				&#125;	</span><br><span class="line">			&#125;else&#x2F;&#x2F;第三次栈空结果集遍历完成,退出循环</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">		top &#x3D; plist-&gt;next;</span><br><span class="line">		ti &#x3D; top-&gt;i;</span><br><span class="line">		if(ti &#x3D;&#x3D; n-1)&#123;&#x2F;&#x2F;当前路径走到结果集底部时,此路径不是有效解,回溯,寻找其他解</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">			s[ti] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti]*last.x;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		if(last.i &#x3D;&#x3D; ti+1)&#123;&#x2F;&#x2F;检查是否有回溯</span><br><span class="line">			if(1 &#x3D;&#x3D; last.x)&#123;&#x2F;&#x2F;上一轮回溯前的路径是走的1还是0(从左子树回溯到当前节点的还是右子树)</span><br><span class="line">				push(plist,ti+1,0);</span><br><span class="line">				s[ti+1] &#x3D; 0;</span><br><span class="line">			&#125;else&#123;&#x2F;&#x2F;右子树回溯的,当前结点结果集遍历完成,回溯到上一层;</span><br><span class="line">				last &#x3D; pop(plist);</span><br><span class="line">				tg +&#x3D; a[ti]*last.x;</span><br><span class="line">				s[ti] &#x3D; 0;</span><br><span class="line">			&#125;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;	</span><br><span class="line">		push(plist,ti+1,1);&#x2F;&#x2F;默认先录入当前节点元素</span><br><span class="line">		tg -&#x3D; a[ti+1];		</span><br><span class="line">		if(tg &gt;&#x3D; 0)&#123;</span><br><span class="line">			s[ti+1] &#x3D; 1;			</span><br><span class="line">		&#125;else&#123;&#x2F;&#x2F;不满足条件,回溯</span><br><span class="line">			s[ti+1] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti+1];</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">		&#125;</span><br><span class="line">		if(tg &#x3D;&#x3D; 0)</span><br><span class="line">			break;			</span><br><span class="line">	&#125;</span><br><span class="line">	Destory(plist);</span><br><span class="line">	if(tg)</span><br><span class="line">		printf(&quot;No Solution!&quot;);</span><br><span class="line">	else</span><br><span class="line">		for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">			if(1 &#x3D;&#x3D; s[i])</span><br><span class="line">				printf(&quot;%d &quot;,a[i]);</span><br><span class="line">		&#125;		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个问题是oj上的一道题但是我写的老是超时,所以就在百度上看到了参考文章,给了我一些启发,但是对输入排序是会改变结果输出的顺序的,然后oj会判错,因为不加排序的时候会显示超时,加了之后直接就判错了………,但是排序后应该是会有影响的.</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>中缀表达式的计算</title>
-    <url>/2022/04/23/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AE%A1%E7%AE%97/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<h3 id="参考文章">参考文章</h3>
-<p>https://blog.csdn.net/sgbfblog/article/details/8001651</p>
-<h3 id="前言">前言</h3>
-<p>最近看面经看到了计算中缀表达式结果这个问题，自己猛的的一想，只想到和栈运用相关，
-没啥具体思路， 于是就去查了查，记录下自己的简单实现，
-主要还是放个大体思路在这里，方便以后忘了回看。</p>
-<h3 id="具体思路">具体思路</h3>
-<p>中缀表达式是不好直接计算的， 因改先把中缀表达式转换为后缀表达式，
-计算后缀表达式在编程上是更好实现的。</p>
-<h4 id="计算后缀表达式的过程">计算后缀表达式的过程</h4>
-<p>需要借用一个栈，存放数据， 遍历后缀表达式，遇到数据则入栈，
-遇到运算符，连续出栈两个数据，
-将两个数据和运算符构成的表达式的计算结果入栈，最后栈中的数据就是整个表达式的结果。</p>
-<h4 id="中缀表达式转后缀表达式">中缀表达式转后缀表达式</h4>
-<p>需要一个栈，存放运算符。遍历中缀表达式，按下面的规则转换：</p>
-<ul>
-<li>如果遇到操作数，我们就直接将其输出到结果表达式中</li>
-<li>遇到运算符（左右括号也看作运算符）
-<ul>
-<li>遇到右括号 ， 不断将栈中的运算符出栈，并输出到结果表达式中,
-直到遇到左括号， 左括号只出栈不输出到结果表达式中。</li>
-<li>遇到左括号直接入栈</li>
-<li>遇到’+’, ‘-‘ 之类的运算符，
-若栈顶运算符优先级不小于（大于等于）当前遇到的运算符，则出栈运算符到结果表达式中，
-持续这个动作直到栈顶运算符为左括号，
-或者栈空。然后将当前遇到的运算符入栈。</li>
-<li>遍历结束后， 若栈不空，将栈中所有元素出栈到结果表达式中。</li>
-</ul></li>
-</ul>
-<p>写的思路可能不是那么直观，去看看参考文章，那里有实例，
-看过之后就会明白了。。。。。</p>
-<h3 id="用c简单实现了一下">用C++简单实现了一下</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;string&gt;</span><br><span class="line">#include&lt;stack&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int getPriority(char );&#x2F;&#x2F;获取运算符优先级</span><br><span class="line">string convertToSuffix(string); &#x2F;&#x2F;将中缀表达式转化为后缀表达式</span><br><span class="line">double getResult(string); &#x2F;&#x2F;计算后缀表达式获取结果</span><br><span class="line"></span><br><span class="line">int main() &#123; </span><br><span class="line">    string str &#x3D; &quot;1+2*3+(4*5+6)*7&quot;;</span><br><span class="line">    string str2 &#x3D; convertToSuffix(str);</span><br><span class="line">    cout&lt;&lt; getResult(str2) &lt;&lt;endl;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int getPriority(char a)&#123;</span><br><span class="line">    int ret &#x3D; 0;</span><br><span class="line">    switch(a)&#123;</span><br><span class="line">        case &#39;+&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;-&#39;: ret &#x3D; 1; break;</span><br><span class="line">        case &#39;*&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;&#x2F;&#39;: ret &#x3D; 2; break;</span><br><span class="line">        case &#39;(&#39;: ret &#x3D; 0; break;</span><br><span class="line">        default: break;</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string convertToSuffix(string str)&#123;</span><br><span class="line">    string ret &#x3D; &quot;&quot;;</span><br><span class="line">    stack&lt;char&gt; s;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39; &lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123;&#x2F;&#x2F;0-9直接输出到结果中</span><br><span class="line">            ret +&#x3D; str[i];</span><br><span class="line">        &#125;else if(&#39;(&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到左括号直接入栈</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;else if(&#39;)&#39; &#x3D;&#x3D; str[i])&#123;&#x2F;&#x2F;碰到右括号出栈到左括号</span><br><span class="line">            while(s.top() !&#x3D; &#39;(&#39;)&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.pop();</span><br><span class="line">        &#125;else&#123;&#x2F;&#x2F;碰到运算符， 出栈优先级不小于它的所有运算符在将其入栈</span><br><span class="line">            while(!s.empty() &amp;&amp; getPriority(s.top()) &gt;&#x3D;  getPriority(str[i]))&#123;</span><br><span class="line">                ret +&#x3D; s.top();</span><br><span class="line">                s.pop();</span><br><span class="line">            &#125;</span><br><span class="line">            s.push(str[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    while(!s.empty())&#123;</span><br><span class="line">        ret +&#x3D; s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    return ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">double getResult(string str)&#123;</span><br><span class="line">    double ret &#x3D; 0;</span><br><span class="line">    stack&lt;double&gt; s_num;</span><br><span class="line">    for(int i&#x3D;0; i&lt;str.size(); i++)&#123;</span><br><span class="line">        if(&#39;0&#39;&lt;&#x3D; str[i] &amp;&amp; str[i] &lt;&#x3D; &#39;9&#39;)&#123; &#x2F;&#x2F;遇到数字则入栈</span><br><span class="line">            s_num.push(str[i]-&#39;0&#39;);</span><br><span class="line">        &#125;else&#123; &#x2F;&#x2F;遇到运算符出栈两个数参与运算再把结果入栈</span><br><span class="line">            double temp1; </span><br><span class="line">            double temp2;</span><br><span class="line">            double temp3;</span><br><span class="line">            temp1 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            temp2 &#x3D; s_num.top();</span><br><span class="line">            s_num.pop();</span><br><span class="line">            switch(str[i])&#123;</span><br><span class="line">                case &#39;+&#39;: temp3 &#x3D; temp1 + temp2; break;</span><br><span class="line">                case &#39;-&#39;: temp3 &#x3D; temp1 - temp2; break;</span><br><span class="line">                case &#39;*&#39;: temp3 &#x3D; temp1 * temp2; break;</span><br><span class="line">                case &#39;&#x2F;&#39;: temp3 &#x3D; temp1 &#x2F; temp2; break;</span><br><span class="line">                default: break;</span><br><span class="line">            &#125;</span><br><span class="line">            s_num.push(temp3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return s_num.top();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-  </entry>
-  <entry>
-    <title>test</title>
-    <url>/2020/10/11/test/</url>
-    <content><![CDATA[<p> <br>
-<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
 ]]></content>
   </entry>
   <entry>
