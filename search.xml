@@ -1,107 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CSAPP笔记-链接</title>
-    <url>/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<p>csapp有空会读一下，但是总是断断续续的再读，这样看完的东西太容易忘了，梳理记录一下，加深理解，后面回看的时候也方便快速回忆。</p>
-<h2 id="编译器驱动程序">编译器驱动程序</h2>
-<h3 id="源文件到可执行目标文件的过程">源文件到可执行目标文件的过程</h3>
-<ul>
-<li><span class="math inline">\(main.c(源文件)\xrightarrow{预处理器(cpp)}main.i(中间文件)\xrightarrow{编译器(cc1)}main.s(汇编文件)\xrightarrow{汇编器(as)}\\main.o(可重定位目标文件)\xrightarrow{链接器ld}a.out(可执行目标文件)\)</span></li>
-<li>过程中的工具链
-<ul>
-<li>预处理器：将对代码做一些预处理操作如：宏定义的文本替换，将头文件的内容复制到include处等</li>
-<li>编译器：将.i文件翻译成汇编文件格式为.s，文件内容为可阅读的汇编代码，因为汇编代码与cpu的指令集相关联，所以是不可移植的。</li>
-<li>汇编器：将.s文件翻译成机器码文件，不可阅读（可以使用objdump来将.o文件转换为汇编格式）</li>
-<li>链接器：将多个.o文件链接合并成一个可执行文件，过程中涉及符号解析，重定位。</li>
-</ul></li>
-<li>Linux中可执行目标程序（不依赖动态库）的运行过程
-<ol type="1">
-<li>shell中输入运行可执行文件</li>
-<li>shell调用操作系统加载器(操作系统API--exec函数族也是这个原理)</li>
-<li>加载器将可执行目标文件中的代码和数据复制到内存中</li>
-<li>加载器跳转到程序的入口点(_start函数)，执行_start函数.
-_start函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
-<li>_start函数调用系统启动函数
-__libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
-</ol></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>C中的void</title>
-    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84void/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<p>参考文章:https://www.iteye.com/blog/zhengdl126-1739165</p>
-<p>https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</p>
-<p>void最初接触当然是在学C的时候，见到的用法就是指明函数无需返回指，在学校计算机系统基础课的malloc_lab(CSAPP里的)里，大量的用到了void类型的指针，在做实验的时候了解了一下void的用法；</p>
-<p>首先当然是百度后看前辈们的分享的知识；</p>
-<h4 id="void用法">VOID用法:</h4>
-<ol type="1">
-<li>如果函数没有返回值，那么应声明为void类型;</li>
-<li>如果函数无参数，那么应声明其参数为void；</li>
-<li>如果函数的参数可以是任意类型指针，那么应声明其参数为void * ；</li>
-<li>void不能代表一个真实的变量；</li>
-</ol>
-<hr>
-<h4 id="void使用注意事项">VOID*使用注意事项：</h4>
-<ol type="1">
-<li>任何类型的指针都可以直接赋值给void* 类型变量；但是，void *
-类型的变量作为右值赋给任意类型指针变量时要做类型转换。因为“无类型”可以包容“有类型”，而“有类型”则不能包容“无类型”；（C++适用，C中不适用）</li>
-</ol>
-<p>e.g.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int a &#x3D; 0;</span><br><span class="line">int *p &#x3D; &amp;a;</span><br><span class="line">void *vp &#x3D; NULL;</span><br><span class="line">p &#x3D; (int *)vp;</span><br><span class="line">vp &#x3D; p;</span><br></pre></td></tr></table></figure>
-<p>在网上百度看一种说法，NULL是((void *)
-0),的宏,依据是stdio.h里的声明：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#ifndef NULL</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">#define NULL    0</span><br><span class="line">#else  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#define NULL    ((void *)0)</span><br><span class="line">#endif  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#endif  &#x2F;* NULL *&#x2F;</span><br></pre></td></tr></table></figure>
-<p>上面可以看出在C++中NULL是 0，在C中NULL被定义为 (（void<em>)0
-)，在c中void</em> 类型的值可以直接赋值给任意类型的指针变量，在dev
-C++分别在.c和.cpp文件里比编译下面这个语句：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int *p &#x3D; (void*)0</span><br></pre></td></tr></table></figure>
-<p>前者编译后没有任何提示信息，后者会报错…….</p>
-<p>至于为什么c和c++的NULL不一样，stackoverflow里看到了一个问答，里面给出了C和C++对空指针常量(NULL)的不同定义:</p>
-<p>Back in C++03, a null pointer was defined by the ISO specification
-(§4.10/1) as</p>
-<blockquote>
-<p>A null pointer constant is an integral constant expression (5.19)
-rvalue of integer type that evaluates to zero.</p>
-</blockquote>
-<p>In C, this rule is similar, but is a bit different (§6.3.2.3/3):</p>
-<blockquote>
-<p>An integer constant expression with the value 0, or such an
-expression cast to type <code>void *</code>, is called a null pointer
-constant.55) If a null pointer constant is converted to a pointer type,
-the resulting pointer, called a null pointer, is guaranteed to compare
-unequal to a pointer to any object or function.</p>
-</blockquote>
-<p>看来在c中0和(void*)0都能表示空指针常量，所以在C和C++里都能这样写:
-<code>int *p = 0;</code>,</p>
-<p>在C++里可以写看起来怪但没有错的语句：<code>int a = NULL;</code>,这里又引出几个nullptr之于NULL的优点。</p>
-<p>如果再看到这里又想不起来就重新看看吧：https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</p>
-<ol type="1">
-<li>如果函数没有返回值，那么应声明为void类型;
-在C语言中，凡不加返回值类型限定的函数，就会被编译器作为返回整型值处理。
-如果函数无参数,那么应声明其参数为void
-在C++语言中声明一个这样的函数：</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int function(void)&#123;	return 1;&#125;</span><br></pre></td></tr></table></figure>
-<p>则进行下面的调用是不合法的： function(2);
-因为在C++中，函数参数为void的意思是这个函数不接受任何参数。 我们在Turbo
-C 2.0中编译：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &quot;stdio.h&quot;</span><br><span class="line">fun()&#123;</span><br><span class="line">	return 1;</span><br><span class="line">&#125;</span><br><span class="line">main()&#123;</span><br><span class="line">	printf(&quot;%d&quot;,fun(2));</span><br><span class="line">	getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++中，不能向无参数的函数传送任何参数，出错提示“’fun’
-: function does not take 1
-parameters”。所以，无论在C还是C++中，若函数不接受任何参数，一定要指明参数为void。
-\3. void不能代表一个真实的变量 void a; //错误 function(void a);
-//错误</p>
-<h4 id="小结">小结</h4>
-<p>正如博主所说，void体现了一种抽象,void*很类似面向对象里的泛型。面向过程语言也有面向对象的思想，面向过程也可以写面向对象的东西。语言只是工具，编程重要的是思想。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>CMake笔记</title>
     <url>/2024/04/19/CMake%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p> </p>
@@ -194,6 +93,120 @@ optimized&gt; ...)</strong></p>
 <li><p>EXECUTEABLE_OUTPUT_PATH:指定可执行文件的输出路径</p></li>
 <li><p>LIBRARY_OUTPUT_PATH:库文件输出的存放路径</p></li>
 </ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>C中的void</title>
+    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84void/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>参考文章:https://www.iteye.com/blog/zhengdl126-1739165</p>
+<p>https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</p>
+<p>void最初接触当然是在学C的时候，见到的用法就是指明函数无需返回指，在学校计算机系统基础课的malloc_lab(CSAPP里的)里，大量的用到了void类型的指针，在做实验的时候了解了一下void的用法；</p>
+<p>首先当然是百度后看前辈们的分享的知识；</p>
+<h4 id="void用法">VOID用法:</h4>
+<ol type="1">
+<li>如果函数没有返回值，那么应声明为void类型;</li>
+<li>如果函数无参数，那么应声明其参数为void；</li>
+<li>如果函数的参数可以是任意类型指针，那么应声明其参数为void * ；</li>
+<li>void不能代表一个真实的变量；</li>
+</ol>
+<hr>
+<h4 id="void使用注意事项">VOID*使用注意事项：</h4>
+<ol type="1">
+<li>任何类型的指针都可以直接赋值给void* 类型变量；但是，void *
+类型的变量作为右值赋给任意类型指针变量时要做类型转换。因为“无类型”可以包容“有类型”，而“有类型”则不能包容“无类型”；（C++适用，C中不适用）</li>
+</ol>
+<p>e.g.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int a &#x3D; 0;</span><br><span class="line">int *p &#x3D; &amp;a;</span><br><span class="line">void *vp &#x3D; NULL;</span><br><span class="line">p &#x3D; (int *)vp;</span><br><span class="line">vp &#x3D; p;</span><br></pre></td></tr></table></figure>
+<p>在网上百度看一种说法，NULL是((void *)
+0),的宏,依据是stdio.h里的声明：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#ifndef NULL</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">#define NULL    0</span><br><span class="line">#else  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#define NULL    ((void *)0)</span><br><span class="line">#endif  &#x2F;* __cplusplus *&#x2F;</span><br><span class="line">#endif  &#x2F;* NULL *&#x2F;</span><br></pre></td></tr></table></figure>
+<p>上面可以看出在C++中NULL是 0，在C中NULL被定义为 (（void<em>)0
+)，在c中void</em> 类型的值可以直接赋值给任意类型的指针变量，在dev
+C++分别在.c和.cpp文件里比编译下面这个语句：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int *p &#x3D; (void*)0</span><br></pre></td></tr></table></figure>
+<p>前者编译后没有任何提示信息，后者会报错…….</p>
+<p>至于为什么c和c++的NULL不一样，stackoverflow里看到了一个问答，里面给出了C和C++对空指针常量(NULL)的不同定义:</p>
+<p>Back in C++03, a null pointer was defined by the ISO specification
+(§4.10/1) as</p>
+<blockquote>
+<p>A null pointer constant is an integral constant expression (5.19)
+rvalue of integer type that evaluates to zero.</p>
+</blockquote>
+<p>In C, this rule is similar, but is a bit different (§6.3.2.3/3):</p>
+<blockquote>
+<p>An integer constant expression with the value 0, or such an
+expression cast to type <code>void *</code>, is called a null pointer
+constant.55) If a null pointer constant is converted to a pointer type,
+the resulting pointer, called a null pointer, is guaranteed to compare
+unequal to a pointer to any object or function.</p>
+</blockquote>
+<p>看来在c中0和(void*)0都能表示空指针常量，所以在C和C++里都能这样写:
+<code>int *p = 0;</code>,</p>
+<p>在C++里可以写看起来怪但没有错的语句：<code>int a = NULL;</code>,这里又引出几个nullptr之于NULL的优点。</p>
+<p>如果再看到这里又想不起来就重新看看吧：https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</p>
+<ol type="1">
+<li>如果函数没有返回值，那么应声明为void类型;
+在C语言中，凡不加返回值类型限定的函数，就会被编译器作为返回整型值处理。
+如果函数无参数,那么应声明其参数为void
+在C++语言中声明一个这样的函数：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int function(void)&#123;	return 1;&#125;</span><br></pre></td></tr></table></figure>
+<p>则进行下面的调用是不合法的： function(2);
+因为在C++中，函数参数为void的意思是这个函数不接受任何参数。 我们在Turbo
+C 2.0中编译：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &quot;stdio.h&quot;</span><br><span class="line">fun()&#123;</span><br><span class="line">	return 1;</span><br><span class="line">&#125;</span><br><span class="line">main()&#123;</span><br><span class="line">	printf(&quot;%d&quot;,fun(2));</span><br><span class="line">	getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++中，不能向无参数的函数传送任何参数，出错提示“’fun’
+: function does not take 1
+parameters”。所以，无论在C还是C++中，若函数不接受任何参数，一定要指明参数为void。
+\3. void不能代表一个真实的变量 void a; //错误 function(void a);
+//错误</p>
+<h4 id="小结">小结</h4>
+<p>正如博主所说，void体现了一种抽象,void*很类似面向对象里的泛型。面向过程语言也有面向对象的思想，面向过程也可以写面向对象的东西。语言只是工具，编程重要的是思想。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>CSAPP笔记-链接</title>
+    <url>/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>csapp有空会读一下，但是总是断断续续的再读，这样看完的东西太容易忘了，梳理记录一下，加深理解，后面回看的时候也方便快速回忆。</p>
+<h2 id="编译器驱动程序">编译器驱动程序</h2>
+<h3 id="源文件到可执行目标文件的过程">源文件到可执行目标文件的过程</h3>
+<ul>
+<li><span class="math inline">\(main.c(源文件)\xrightarrow{预处理器(cpp)}main.i(中间文件)\xrightarrow{编译器(cc1)}main.s(汇编文件)\)</span>
+<span class="math inline">\(\xrightarrow{汇编器(as)}main.o(可重定位目标文件)\xrightarrow{链接器ld}a.out(可执行目标文件)\)</span></li>
+<li>过程中的工具链:
+<ul>
+<li>预处理器：将对代码做一些预处理操作如：宏定义的文本替换，将头文件的内容复制到include处等</li>
+<li>编译器：将.i文件翻译成汇编文件格式为.s，文件内容为可阅读的汇编代码，因为汇编代码与cpu的指令集相关联，所以是不可移植的。</li>
+<li>汇编器：将.s文件翻译成机器码文件，不可阅读（可以使用objdump来将.o文件转换为汇编格式）</li>
+<li>链接器：将多个.o文件链接合并成一个可执行文件，过程中涉及符号解析，重定位。</li>
+</ul></li>
+</ul>
+<h3 id="linux中可执行目标程序不依赖动态库的运行过程">Linux中可执行目标程序（不依赖动态库）的运行过程</h3>
+<ol type="1">
+<li>shell中输入运行可执行文件</li>
+<li>shell调用操作系统加载器(操作系统API--exec函数族也是这个原理)</li>
+<li>加载器将可执行目标文件中的代码和数据复制到内存中</li>
+<li>加载器跳转到程序的入口点(_start函数)，执行_start函数.
+_start函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
+<li>_start函数调用系统启动函数
+__libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
+</ol>
+<h3 id="目标文件">目标文件</h3>
+<p>目标文件有三种：</p>
+<ul>
+<li>可重定位目标文件：.o文件，包含二进制代码和数据，包含各种节(section)：代码节、数据节等等，每个节都是一个连续的二进制字节序列。</li>
+<li>可执行目标文件：应用程序文件，由一系列可重定位目标文件合可共享目标文件(非必须)合并组成</li>
+<li>共享目标文件：静态或动态库，可由一系列可重定位目标文件生成</li>
+</ul>
+<p>目标文件在不同系统上具有不同格式。现代x86-64Linux和Unix采用ELF（Executable
+and Linkable Format，执行可链接格式）格式，Windows采用PE（Portable
+Executable, 可移植可执行）格式</p>
+<h3 id="静态链接">静态链接</h3>
+<p>静态链接器（Linux上为ld）以一组可重定位目标文件为输入，生成一个完全链接的可执行目标程序。</p>
 ]]></content>
   </entry>
   <entry>
@@ -356,21 +369,6 @@ mode；否则使用传统的GOPATH mode。</td>
 ]]></content>
   </entry>
   <entry>
-    <title>回溯算法--子列和问题</title>
-    <url>/2022/04/23/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95-%E5%AD%90%E5%88%97%E5%92%8C%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p> <br>
-<a id="more"></a></p>
-<p>参考文章: https://www.cnblogs.com/lv88/p/4491796.html</p>
-<h3 id="正文">正文:</h3>
-<p>算法课的第四章的第一个实验,做之前看了一下算法网课的介绍,主要思想就是遍历子集树,在遍历的时候会检查当前节点是否符合约束条件,不符合的化就放弃当前节点以下的结果集;
-可能是当初数据结构没学好,就非递归构造树的遍历都费了我老鼻子劲了;
-记录下做题的思路吧; 先上代码:</p>
-<p>……………栈的相关操作就不写了,太占篇幅;</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">typedef struct StackNode&#123;</span><br><span class="line">	int i;&#x2F;&#x2F;当前节点对应数组第i号元素(0开始)</span><br><span class="line">	int x;&#x2F;&#x2F;第i号节点是否被选中</span><br><span class="line">	struct StackNode *next;</span><br><span class="line">&#125;node;&#x2F;&#x2F;结果集节点结构</span><br><span class="line"></span><br><span class="line">node* init();&#x2F;&#x2F;栈初始化</span><br><span class="line">void push(node *, int ,int);</span><br><span class="line">node pop(node *);</span><br><span class="line">int isEmpty(node *);</span><br><span class="line">void Destory(node *);</span><br><span class="line">void sort(int *,int);</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	int n,goal,tg,ti &#x3D; -1,ts &#x3D; 0,h;</span><br><span class="line">	node *top,last;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;goal);</span><br><span class="line">	int a[n];</span><br><span class="line">	int s[n];</span><br><span class="line">	for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">		scanf(&quot;%d&quot;,&amp;a[i]);</span><br><span class="line">		s[i] &#x3D; -1;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(a,n);</span><br><span class="line">	node *plist &#x3D; init();</span><br><span class="line">	tg &#x3D; goal;</span><br><span class="line">	while(1)&#123;	</span><br><span class="line">		if(isEmpty(plist))&#123;&#x2F;&#x2F;栈空时的操作</span><br><span class="line">			if(0 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第二次栈空操作</span><br><span class="line">				push(plist,0,0);</span><br><span class="line">				plist-&gt;i &#x3D; 1;</span><br><span class="line">			&#125;else if(-1 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第一次栈空操作</span><br><span class="line">				if(a[0]&lt;&#x3D;tg)&#123;&#x2F;&#x2F;满足约束条件,取当前节点元素,x置1</span><br><span class="line">					push(plist,0,1);</span><br><span class="line">					plist-&gt;i &#x3D; 0;</span><br><span class="line">					s[0] &#x3D; 1;</span><br><span class="line">					tg -&#x3D; a[plist-&gt;next-&gt;i];</span><br><span class="line">				&#125;else&#123;&#x2F;&#x2F;不满足条件,不取,x置0</span><br><span class="line">					push(plist,0,0);</span><br><span class="line">					plist-&gt;i &#x3D; 1;</span><br><span class="line">				&#125;	</span><br><span class="line">			&#125;else&#x2F;&#x2F;第三次栈空结果集遍历完成,退出循环</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">		top &#x3D; plist-&gt;next;</span><br><span class="line">		ti &#x3D; top-&gt;i;</span><br><span class="line">		if(ti &#x3D;&#x3D; n-1)&#123;&#x2F;&#x2F;当前路径走到结果集底部时,此路径不是有效解,回溯,寻找其他解</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">			s[ti] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti]*last.x;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		if(last.i &#x3D;&#x3D; ti+1)&#123;&#x2F;&#x2F;检查是否有回溯</span><br><span class="line">			if(1 &#x3D;&#x3D; last.x)&#123;&#x2F;&#x2F;上一轮回溯前的路径是走的1还是0(从左子树回溯到当前节点的还是右子树)</span><br><span class="line">				push(plist,ti+1,0);</span><br><span class="line">				s[ti+1] &#x3D; 0;</span><br><span class="line">			&#125;else&#123;&#x2F;&#x2F;右子树回溯的,当前结点结果集遍历完成,回溯到上一层;</span><br><span class="line">				last &#x3D; pop(plist);</span><br><span class="line">				tg +&#x3D; a[ti]*last.x;</span><br><span class="line">				s[ti] &#x3D; 0;</span><br><span class="line">			&#125;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;	</span><br><span class="line">		push(plist,ti+1,1);&#x2F;&#x2F;默认先录入当前节点元素</span><br><span class="line">		tg -&#x3D; a[ti+1];		</span><br><span class="line">		if(tg &gt;&#x3D; 0)&#123;</span><br><span class="line">			s[ti+1] &#x3D; 1;			</span><br><span class="line">		&#125;else&#123;&#x2F;&#x2F;不满足条件,回溯</span><br><span class="line">			s[ti+1] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti+1];</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">		&#125;</span><br><span class="line">		if(tg &#x3D;&#x3D; 0)</span><br><span class="line">			break;			</span><br><span class="line">	&#125;</span><br><span class="line">	Destory(plist);</span><br><span class="line">	if(tg)</span><br><span class="line">		printf(&quot;No Solution!&quot;);</span><br><span class="line">	else</span><br><span class="line">		for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">			if(1 &#x3D;&#x3D; s[i])</span><br><span class="line">				printf(&quot;%d &quot;,a[i]);</span><br><span class="line">		&#125;		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个问题是oj上的一道题但是我写的老是超时,所以就在百度上看到了参考文章,给了我一些启发,但是对输入排序是会改变结果输出的顺序的,然后oj会判错,因为不加排序的时候会显示超时,加了之后直接就判错了………,但是排序后应该是会有影响的.</p>
-]]></content>
-  </entry>
-  <entry>
     <title>test</title>
     <url>/2020/10/11/test/</url>
     <content><![CDATA[<p> <br>
@@ -424,6 +422,78 @@ mode；否则使用传统的GOPATH mode。</td>
 <p>p表示的是一个<strong>指向一个元素类型为整数，元素个数为5的内存块的指针</strong></p>
 <p>到这里，虽然他们的数据内容一致，但还要注意一下数据的类型：
 在数组上尤其是，因为数组指针的操做平时还是有用到的，函数指针除了用来引用函数，也不会去做一些类似数组指针的操作，而且有些操做也不允许。。。。。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>回溯算法--子列和问题</title>
+    <url>/2022/04/23/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95-%E5%AD%90%E5%88%97%E5%92%8C%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p> <br>
+<a id="more"></a></p>
+<p>参考文章: https://www.cnblogs.com/lv88/p/4491796.html</p>
+<h3 id="正文">正文:</h3>
+<p>算法课的第四章的第一个实验,做之前看了一下算法网课的介绍,主要思想就是遍历子集树,在遍历的时候会检查当前节点是否符合约束条件,不符合的化就放弃当前节点以下的结果集;
+可能是当初数据结构没学好,就非递归构造树的遍历都费了我老鼻子劲了;
+记录下做题的思路吧; 先上代码:</p>
+<p>……………栈的相关操作就不写了,太占篇幅;</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">typedef struct StackNode&#123;</span><br><span class="line">	int i;&#x2F;&#x2F;当前节点对应数组第i号元素(0开始)</span><br><span class="line">	int x;&#x2F;&#x2F;第i号节点是否被选中</span><br><span class="line">	struct StackNode *next;</span><br><span class="line">&#125;node;&#x2F;&#x2F;结果集节点结构</span><br><span class="line"></span><br><span class="line">node* init();&#x2F;&#x2F;栈初始化</span><br><span class="line">void push(node *, int ,int);</span><br><span class="line">node pop(node *);</span><br><span class="line">int isEmpty(node *);</span><br><span class="line">void Destory(node *);</span><br><span class="line">void sort(int *,int);</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	int n,goal,tg,ti &#x3D; -1,ts &#x3D; 0,h;</span><br><span class="line">	node *top,last;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;goal);</span><br><span class="line">	int a[n];</span><br><span class="line">	int s[n];</span><br><span class="line">	for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">		scanf(&quot;%d&quot;,&amp;a[i]);</span><br><span class="line">		s[i] &#x3D; -1;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(a,n);</span><br><span class="line">	node *plist &#x3D; init();</span><br><span class="line">	tg &#x3D; goal;</span><br><span class="line">	while(1)&#123;	</span><br><span class="line">		if(isEmpty(plist))&#123;&#x2F;&#x2F;栈空时的操作</span><br><span class="line">			if(0 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第二次栈空操作</span><br><span class="line">				push(plist,0,0);</span><br><span class="line">				plist-&gt;i &#x3D; 1;</span><br><span class="line">			&#125;else if(-1 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第一次栈空操作</span><br><span class="line">				if(a[0]&lt;&#x3D;tg)&#123;&#x2F;&#x2F;满足约束条件,取当前节点元素,x置1</span><br><span class="line">					push(plist,0,1);</span><br><span class="line">					plist-&gt;i &#x3D; 0;</span><br><span class="line">					s[0] &#x3D; 1;</span><br><span class="line">					tg -&#x3D; a[plist-&gt;next-&gt;i];</span><br><span class="line">				&#125;else&#123;&#x2F;&#x2F;不满足条件,不取,x置0</span><br><span class="line">					push(plist,0,0);</span><br><span class="line">					plist-&gt;i &#x3D; 1;</span><br><span class="line">				&#125;	</span><br><span class="line">			&#125;else&#x2F;&#x2F;第三次栈空结果集遍历完成,退出循环</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">		top &#x3D; plist-&gt;next;</span><br><span class="line">		ti &#x3D; top-&gt;i;</span><br><span class="line">		if(ti &#x3D;&#x3D; n-1)&#123;&#x2F;&#x2F;当前路径走到结果集底部时,此路径不是有效解,回溯,寻找其他解</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">			s[ti] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti]*last.x;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		if(last.i &#x3D;&#x3D; ti+1)&#123;&#x2F;&#x2F;检查是否有回溯</span><br><span class="line">			if(1 &#x3D;&#x3D; last.x)&#123;&#x2F;&#x2F;上一轮回溯前的路径是走的1还是0(从左子树回溯到当前节点的还是右子树)</span><br><span class="line">				push(plist,ti+1,0);</span><br><span class="line">				s[ti+1] &#x3D; 0;</span><br><span class="line">			&#125;else&#123;&#x2F;&#x2F;右子树回溯的,当前结点结果集遍历完成,回溯到上一层;</span><br><span class="line">				last &#x3D; pop(plist);</span><br><span class="line">				tg +&#x3D; a[ti]*last.x;</span><br><span class="line">				s[ti] &#x3D; 0;</span><br><span class="line">			&#125;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;	</span><br><span class="line">		push(plist,ti+1,1);&#x2F;&#x2F;默认先录入当前节点元素</span><br><span class="line">		tg -&#x3D; a[ti+1];		</span><br><span class="line">		if(tg &gt;&#x3D; 0)&#123;</span><br><span class="line">			s[ti+1] &#x3D; 1;			</span><br><span class="line">		&#125;else&#123;&#x2F;&#x2F;不满足条件,回溯</span><br><span class="line">			s[ti+1] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti+1];</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">		&#125;</span><br><span class="line">		if(tg &#x3D;&#x3D; 0)</span><br><span class="line">			break;			</span><br><span class="line">	&#125;</span><br><span class="line">	Destory(plist);</span><br><span class="line">	if(tg)</span><br><span class="line">		printf(&quot;No Solution!&quot;);</span><br><span class="line">	else</span><br><span class="line">		for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">			if(1 &#x3D;&#x3D; s[i])</span><br><span class="line">				printf(&quot;%d &quot;,a[i]);</span><br><span class="line">		&#125;		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个问题是oj上的一道题但是我写的老是超时,所以就在百度上看到了参考文章,给了我一些启发,但是对输入排序是会改变结果输出的顺序的,然后oj会判错,因为不加排序的时候会显示超时,加了之后直接就判错了………,但是排序后应该是会有影响的.</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>设计模式随想</title>
+    <url>/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<h2 id="如何解决复杂性">如何解决复杂性：</h2>
+<ul>
+<li>分解</li>
+<li>抽象</li>
+</ul>
+<h2 id="软件设计的目标复用性">软件设计的目标：复用性</h2>
+<h2 id="设计模式的一些原则">设计模式的一些原则</h2>
+<h3 id="依赖倒置原则">依赖倒置原则</h3>
+<ul>
+<li>高层模块(稳定)不应该依赖低层(变化)模块，应该依赖抽象</li>
+<li>抽象(稳定)不应该依赖于实现细节(变化)， 实现细节应该依赖抽象</li>
+</ul>
+<h3 id="开闭原则">开闭原则：</h3>
+<ul>
+<li>对拓展开放，对修改封闭，面对新需求尽量不修改或少修改已有代码</li>
+</ul>
+<h3 id="单一职责原则">单一职责原则</h3>
+<ul>
+<li><p>一个类应该仅有一个引起它变化的原因（减少耦合）</p></li>
+<li><p>变化的方向隐含类的责任</p></li>
+</ul>
+<h3 id="里氏替换原则">里氏替换原则</h3>
+<ul>
+<li>子类必须能替换他们的基类（is a）</li>
+<li>public继承表达类型抽象</li>
+</ul>
+<h3 id="接口隔离原则">接口隔离原则</h3>
+<ul>
+<li>接口应该小而完备（谨慎提供对外接口）</li>
+<li>不应该强迫客户程序以来他们不用的方法</li>
+</ul>
+<h3 id="优先使用对象组合而不是类继承">优先使用对象组合，而不是类继承</h3>
+<ul>
+<li>类继承为“白盒复用”，
+对象组合为“黑盒复用”--屏蔽用户的感知，减少不必要的依赖（耦合）</li>
+<li>继承在某种程度上破坏了封装性，子类父类耦合度高</li>
+<li>对象组合则只要求被组合的对象具有良好定义的接口，耦合相对较低</li>
+</ul>
+<h3 id="封装变化点">封装变化点</h3>
+<ul>
+<li>使用封装来创建对象之间的分界层，让设计者可以在分界层的一侧进行修改，而不会对另一侧产生不良的影响，从而实现层次间的松耦合。（一种抽象思维的运用）</li>
+</ul>
+<h3 id="针对接口编程而不是针对实现编程">针对接口编程，而不是针对实现编程</h3>
+<ul>
+<li>不将变量类型生命为某个特定的具体类，而是声明为某个接口。</li>
+<li>客户程序无需获取对象的具体类型，只需要知道对象所具有的接口（减少客户程序对自身的依赖，降低耦合）</li>
+<li>减少系统中各部分的依赖关系，从而实现“高内聚、低耦合”的类型设计方案</li>
+</ul>
+<h2 id="小结">小结</h2>
+<p>以目前的层次来看，设计模式的8大设计模式可以总结为：以减少耦合、降低依赖，使用抽象这几个思想来指导面向对象程序的编写，运用这些思想的目的就是使程序面对变化时，能以较小的程序变更来实现需求的变更，提高程序的复用性、开发效率。</p>
 ]]></content>
   </entry>
   <entry>
@@ -650,63 +720,6 @@ b8 05 79 6a 4d 67 8d 6c 24 18 68 f4 8d 04 08 c3
 90 90 90 90 90 /* ‘90’<em>509 </em>/ b8 05 79 6a 4d 8d 6c 24 18 68 f4 8d
 04 08 c3 58 37 68 55
 到这里实验三结束，这个实验能完成主要还是博主写的真的很详细，不然自己写不知到要摸索到什么时候。。。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>设计模式随想</title>
-    <url>/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<h2 id="如何解决复杂性">如何解决复杂性：</h2>
-<ul>
-<li>分解</li>
-<li>抽象</li>
-</ul>
-<h2 id="软件设计的目标复用性">软件设计的目标：复用性</h2>
-<h2 id="设计模式的一些原则">设计模式的一些原则</h2>
-<h3 id="依赖倒置原则">依赖倒置原则</h3>
-<ul>
-<li>高层模块(稳定)不应该依赖低层(变化)模块，应该依赖抽象</li>
-<li>抽象(稳定)不应该依赖于实现细节(变化)， 实现细节应该依赖抽象</li>
-</ul>
-<h3 id="开闭原则">开闭原则：</h3>
-<ul>
-<li>对拓展开放，对修改封闭，面对新需求尽量不修改或少修改已有代码</li>
-</ul>
-<h3 id="单一职责原则">单一职责原则</h3>
-<ul>
-<li><p>一个类应该仅有一个引起它变化的原因（减少耦合）</p></li>
-<li><p>变化的方向隐含类的责任</p></li>
-</ul>
-<h3 id="里氏替换原则">里氏替换原则</h3>
-<ul>
-<li>子类必须能替换他们的基类（is a）</li>
-<li>public继承表达类型抽象</li>
-</ul>
-<h3 id="接口隔离原则">接口隔离原则</h3>
-<ul>
-<li>接口应该小而完备（谨慎提供对外接口）</li>
-<li>不应该强迫客户程序以来他们不用的方法</li>
-</ul>
-<h3 id="优先使用对象组合而不是类继承">优先使用对象组合，而不是类继承</h3>
-<ul>
-<li>类继承为“白盒复用”，
-对象组合为“黑盒复用”--屏蔽用户的感知，减少不必要的依赖（耦合）</li>
-<li>继承在某种程度上破坏了封装性，子类父类耦合度高</li>
-<li>对象组合则只要求被组合的对象具有良好定义的接口，耦合相对较低</li>
-</ul>
-<h3 id="封装变化点">封装变化点</h3>
-<ul>
-<li>使用封装来创建对象之间的分界层，让设计者可以在分界层的一侧进行修改，而不会对另一侧产生不良的影响，从而实现层次间的松耦合。（一种抽象思维的运用）</li>
-</ul>
-<h3 id="针对接口编程而不是针对实现编程">针对接口编程，而不是针对实现编程</h3>
-<ul>
-<li>不将变量类型生命为某个特定的具体类，而是声明为某个接口。</li>
-<li>客户程序无需获取对象的具体类型，只需要知道对象所具有的接口（减少客户程序对自身的依赖，降低耦合）</li>
-<li>减少系统中各部分的依赖关系，从而实现“高内聚、低耦合”的类型设计方案</li>
-</ul>
-<h2 id="小结">小结</h2>
-<p>以目前的层次来看，设计模式的8大设计模式可以总结为：以减少耦合、降低依赖，使用抽象这几个思想来指导面向对象程序的编写，运用这些思想的目的就是使程序面对变化时，能以较小的程序变更来实现需求的变更，提高程序的复用性、开发效率。</p>
 ]]></content>
   </entry>
 </search>
