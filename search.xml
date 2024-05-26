@@ -1,6 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CMake笔记</title>
+    <url>/2024/04/19/CMake%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>平时项目中会涉及一些的CMake脚本的修改,但都是需要改的地方去现查现或者参考已经写好的部分,在开始系统的看一些入门要点,然后记录一下</p>
+<h2 id="cmake常用指令">CMake常用指令</h2>
+<ul>
+<li><h4 id="cmake_minimum_required---指定cmake的最小版本要求">cmake_minimum_required
+- 指定CMake的最小版本要求</h4>
+<ul>
+<li><p>语法: <strong>cmake_minimum_required(VERSION versionNumber
+[FATAL_ERROR])</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#cmake最小版本要求3.0.1</span><br><span class="line">cmake_minimum_required(VERSION 3.0.1)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="project---定义工程名称并可指定工程支持的语言">project -
+定义工程名称，并可指定工程支持的语言</h4>
+<ul>
+<li><p>语法：<strong>project(projectName [CXX] [C] [JAVA])</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#指定工程名为XXController</span><br><span class="line">project(XXController)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="set--显示定义变量">set -显示定义变量</h4>
+<ul>
+<li><p>语法：<strong>set(var [value] [cache type docstring
+[force]])</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#定义SRC变量， 其值为main.cpp test.cpp</span><br><span class="line">set(SRC main.cpp test.cpp)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="include_directories--向工程添加多个特定的库文件搜索路径">include_directories
+-向工程添加多个特定的库文件搜索路径</h4>
+<ul>
+<li><p>语法：<strong>inclide_directories([AFTER|BEFOR] [SYSTEM] dir1
+dir2 ...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将 &#x2F;usr&#x2F;include&#x2F;myincludeFolder 和 .&#x2F;include 添加到头文件搜索路径</span><br><span class="line">include_directories(&#x2F;usr&#x2F;include&#x2F;myincludeFolder .&#x2F;include)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="link_directories--向工程添加多个特定的库文件搜索路径">link_directories
+-向工程添加多个特定的库文件搜索路径</h4>
+<ul>
+<li><p>语法：<strong>link_directories(dir1 dir2 ...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将&#x2F;usr&#x2F;lib&#x2F;mylibFolder和.&#x2F;lib添加到库文件搜索路径</span><br><span class="line">link_directories(&#x2F;usr&#x2F;lib&#x2F;mylibFolder .&#x2F;lib)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="add_library--生成库文件">add_library -生成库文件</h4>
+<ul>
+<li><p>语法：<strong>add_library(libname [SHARED|STATIC|MODULE]
+[EXCLUDE_FROM_ALL] source1 source2 ...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#通过变量 SRC 生成 libHello.so 库</span><br><span class="line">add_libaray(libHello SHARED $&#123;SRC&#125;)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="add_compile_options--添加编译选项">add_compile_options
+-添加编译选项</h4>
+<ul>
+<li><p>语法：<strong>add_compile_options(&lt;option&gt;
+...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加编译选项 -Wall -std&#x3D;c++11 -o2</span><br><span class="line">add_compile_options(-Wall -std&#x3D;c++11 -o2)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="add_exectuable--生成可执行文件">add_exectuable
+-生成可执行文件</h4>
+<ul>
+<li><p>语法：<strong>add_exectuable(exeName source1 source2
+...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译main.cpp 生成可执行文件</span><br><span class="line">add_exectuable(main main.cpp)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="target_link_libraries--为target添加需要链接的共享库">target_link_libraries
+-为target添加需要链接的共享库</h4>
+<ul>
+<li><p>语法：<strong>target_link_libraries(target library1&lt;debug |
+optimized&gt; ...)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将hello动态库文件链接到可执行文件main</span><br><span class="line">target_link_libraries(main hello)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="add_subdirectory--向当前工程添加存放源文件的子目录并可以指定中间二进制和目标二进制存放的位置">add_subdirectory
+-向当前工程添加存放源文件的子目录，并可以指定中间二进制和目标二进制存放的位置</h4>
+<ul>
+<li><p>语法：<strong>add_subdirectory(sourceDir [binaryDir]
+[EXCLUDE_FROM_ALL])</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加src子目录</span><br><span class="line">add_subdirectory(src)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><h4 id="aux_source_directory--发现一个目录下所有源代码文件并将列表存储在一个变量中这个指令临时被用来自动构建源文件列表">aux_source_directory
+-发现一个目录下所有源代码文件并将列表存储在一个变量中，这个指令临时被用来自动构建源文件列表</h4>
+<ul>
+<li><p>语法：<strong>aux_source_directory(dir var)</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#定义src变量，其值为当前目录下所有的源代码文件</span><br><span class="line">add_subdirectory(src)</span><br><span class="line"># 编译src变量所代表的源代码文件，生成main可执行文件</span><br><span class="line">add_executable(main $&#123;src&#125;)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ul>
+<h2 id="cmake常用变量">CMake常用变量</h2>
+<ul>
+<li><p>CMAKE_C_FLAGS: gcc编译选项</p></li>
+<li><p>CMAKE_CXX_FLAGS: g++编译选项</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#在CMAKE_CXX_FLAGS选项追加-sdt&#x3D;c++11</span><br><span class="line">set(CMAKE_CXX_FLAGS &quot;$&#123;CMAKE_CXX_FLAGS&#125; -std&#x3D;c++11&quot;)</span><br></pre></td></tr></table></figure></li>
+<li><p>CMAKE_BUILD_TYPE: 编译类型(Debug Release)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#设置编译类型为Debug</span><br><span class="line">set(CMAKE_BUILD_TYPE Debug)</span><br></pre></td></tr></table></figure></li>
+<li><p>CMAKE_C_COMPILER: 指定C编译器</p></li>
+<li><p>CMAKE_CXX_COMPILER:指定c++编译器</p></li>
+<li><p>EXECUTEABLE_OUTPUT_PATH:指定可执行文件的输出路径</p></li>
+<li><p>LIBRARY_OUTPUT_PATH:库文件输出的存放路径</p></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>CSAPP笔记-链接</title>
     <url>/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/</url>
     <content><![CDATA[<p> </p>
@@ -29,7 +124,7 @@ _start函数是系统目标文件ctrl.o中定义的，对所有C程序都一样<
 <li>_start函数调用系统启动函数
 __libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
 </ol>
-<h3 id="目标文件">目标文件</h3>
+<h2 id="目标文件">目标文件</h2>
 <p>目标文件有三种：</p>
 <ul>
 <li>可重定位目标文件：.o文件，包含二进制代码和数据，包含各种节(section)：代码节、数据节等等，每个节都是一个连续的二进制字节序列。</li>
@@ -45,7 +140,7 @@ Executable, 可移植可执行）格式</p>
 <p><img src="/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/典型ELF可重定位目标文件.jpg" alt="典型的ELF可重定位目标文件结构" style="zoom:30%;"></p>
 <p>上图来自CSAPP，描述了一个ELF可重定位目标文件的结构。大致结构就是以一个ELF头开始，后跟许多“节”，最后跟着一个“节头部表”。每个“节”的大小和位置都是由节头部表描述的，每个节都拥有一个固定大小的条目。</p>
 <ul>
-<li><p><strong>ELF头内容</strong></p>
+<li><p><strong>ELF头</strong></p>
 <ul>
 <li><p>"ELF头"以一个16字节的序列开始，该序列描述了生成该文件的系统的字的大小和字节顺序.</p></li>
 <li><p>剩余的部分包含：ELF头的大小、目标文件的类型、机器类型、节头部表的文件偏移、节头部表中条目的大小和数目。</p></li>
@@ -55,6 +150,8 @@ Executable, 可移植可执行）格式</p>
 <figcaption aria-hidden="true">readelf解析ELF头</figcaption>
 </figure></li>
 </ul></li>
+<li><p>节头部表</p>
+<p>不同节的位置和大小都是节头部表描述的，其中目标文件中的各个节都在其中有一个对应的条目。</p></li>
 <li><p>剩余各个“节”</p>
 <ul>
 <li>.text节：已编译程序的机器代码</li>
@@ -71,6 +168,7 @@ Executable, 可移植可执行）格式</p>
 </ul></li>
 </ul>
 <h3 id="符号解析">符号解析</h3>
+<h4 id="符号">符号</h4>
 <p>​
 每个可重定位目标文件目标模块m都存在一个符号表(.symtab)，它包含m定义和引用的符号，一般有三种不同的符号：</p>
 <ul>
@@ -80,11 +178,95 @@ Executable, 可移植可执行）格式</p>
 </ul>
 <p>非静态的局部变量的生存期和所在的栈帧相关，不记录在符号表中。</p>
 <h4 id="符号表">符号表</h4>
-<p>符号表由汇编器根据.s文件中的符号（编译器输出的）构造的，.symtab节中包含ELF符号表。这张表包含一种特殊数据结构的数组。这种数据结构的格式如下(定义在/usr/include/elf.h文件中)：</p>
+<p>符号表由汇编器根据.s文件中的符号（编译器输出的）构造的，.symtab节中包含ELF符号表。这张表包含一种特殊数据结构的数组。这种数据结构的格式如下(可以尝试在/usr/include/elf.h文件中寻找相关定义)：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">  Elf64_Word	st_name;		&#x2F;* Symbol name (string tbl index) *&#x2F;</span><br><span class="line">  unsigned char	st_info;		&#x2F;* Symbol type and binding *&#x2F;</span><br><span class="line">  unsigned char st_other;		&#x2F;* Symbol visibility *&#x2F;</span><br><span class="line">  Elf64_Section	st_shndx;		&#x2F;* Section index *&#x2F;</span><br><span class="line">  Elf64_Addr	st_value;		&#x2F;* Symbol value *&#x2F;</span><br><span class="line">  Elf64_Xword	st_size;		&#x2F;* Symbol size *&#x2F;</span><br><span class="line">&#125; Elf64_Sym;</span><br></pre></td></tr></table></figure>
-<h3 id="链接静态库">链接静态库</h3>
-<h3 id="重定位">重定位</h3>
-<h3 id="动态库">动态库</h3>
+<p>上诉定义在csapp中给的解析如下,更直观一点：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">  int	name;		&#x2F;* Symbol name (string table index) *&#x2F;</span><br><span class="line">  char	type:4,     &#x2F;* function of data *&#x2F;</span><br><span class="line">  	    binding:4;	&#x2F;* local or global *&#x2F;</span><br><span class="line">  char  other;		&#x2F;* Symbol visibility *&#x2F;</span><br><span class="line">  short	section;    &#x2F;* Section index *&#x2F;</span><br><span class="line">  long	value;		&#x2F;* section offset or absolute address *&#x2F;</span><br><span class="line">  int	size;		&#x2F;* object size in byte *&#x2F;</span><br><span class="line">&#125; Elf64_Sym;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>type通常标识符号的类型：数据或函数，符号表中可能包含各个节的条目，以及对应原始源文件的路径名的条目，所以可能有些额外的其他类型</p></li>
+<li><p>binding表示符号是本地的还是全局的。</p></li>
+<li><p>name是字符串表中偏移，以此确定符号的名字（保存在字符串表中）。</p></li>
+<li><p>value是符号在定义其的节中的偏移，对于可执行目文件是一个绝对运行时地址。</p></li>
+<li><p>size是符号的大小</p></li>
+<li><p>section表示符号定义所在的节，其值实际是节头表的索引值。存在三个特殊的伪节（UNDEF、COMMON、ABS），在节头表中没有具体的对应条目，但会成为此section字段的值。</p>
+<ul>
+<li>ABS代表不该被重定位的符号</li>
+<li>UNDEF代表未定义的符号</li>
+<li>COMMON表示还未被分配位置的未初始化的数据目标。</li>
+</ul></li>
+<li><p>COMMON节的符号和.bss节的符号区别很小现代的GCC版本根据以下规则来区分：</p>
+<ul>
+<li>COMMON：未初始化的全局变量</li>
+<li>.bss: 未初始化的静态变量，以及初始化为0的全局或静态变量</li>
+</ul>
+<p>上述规则的依据主要是根据：编译器处理符号时，将可以确定定义的强符号归结.bss节中，将不确定定义的弱符号归结为COMMON节中。</p></li>
+</ul>
+<h4 id="符号解析-1">符号解析</h4>
+<p>​
+链接器解析符号引用的方法是：将每个引用与输入给它的可重定位目标文件里的符号表中的一个确定的符号定义关联起来。</p>
+<p>​
+对于那些定义和被引用在同一个目标文件的符号，符号解析是很简单的，静态局部变量会有本地链接器符号，编译器需要确保他们拥有唯一的名字。</p>
+<p>​
+对于全局符号，需要额外多考虑一些。当编译器遇到一个不是在当前模块中定义的符号，会假设这个符号是定义在其他模块，生成一个符号表条目。如果链接器在其他任何输入模块的符号表中都没有找到对应的符号定义，链接就会失败。</p>
+<h5 id="解析多重定义的全局符号">解析多重定义的全局符号</h5>
+<p>​
+对全局符号的解析是存在一些麻烦的，因为多个目标文件中可能会定义多个同名的符号。</p>
+<p>​
+链接器处理一系列目标文件时，若出现这种场景，不会立刻结束链接，输出错误，而是采用一些默认的规则来处理以试图选出一个定义采用而抛弃其他定义。这个默认的规则引申出强、弱符号这两个概念:</p>
+<ul>
+<li>强符号：函数和已初始化的变量对应的符号。</li>
+<li>弱符号：未初始化的全局变量对应的符号。</li>
+</ul>
+<p>​ 根据强弱规则的定义，Linux链接器使用如下规则处理多重定义的符号：</p>
+<ol type="1">
+<li>不允许存在多个同名的强符号</li>
+<li>如果存在一个强符号和多个若符号则采用强符号，作为符号</li>
+<li>如果只存在多个弱符号，则从中随机的选一个，作为符号</li>
+</ol>
+<h2 id="链接静态库">链接静态库</h2>
+<h2 id="重定位">重定位</h2>
+<h2 id="动态库">动态库</h2>
+]]></content>
+  </entry>
+  <entry>
+    <title>C中的字符串</title>
+    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<p>下面的内容根据翁凯老师的C语言慕课的内容总结所得：</p>
+<p>字符串：</p>
+<ul>
+<li>以0结尾的一串字符（结尾字符ascii值为0，’\0’的sacii值为0）</li>
+<li>0(‘\0’)标志值符串的结束但它不是字符串的一部分
+<ul>
+<li>计算字符串长度的时候不包含这个0，但是它是占一字节的空间的，具体问题具体分析。</li>
+</ul></li>
+<li>字符串以数组的形式存在，以数组或指针的形式访问</li>
+<li>特殊的一点，字符串字面量可以用来初始化字符数组</li>
+</ul>
+<p>字符串常量：</p>
+<ul>
+<li>形如”hello”</li>
+<li>“hello”会被编译器变成一个字符数组放在某处(rodata段,只读)，这个数组长度是6，结尾有表示结束的0(‘\0’)</li>
+</ul>
+<p>我对字符串的误解是在字符串常量这个点，没有理解C中字符串常量的存储方式</p>
+<p>例如，char *p = “hello”;</p>
+<p>根据一般的指针思想，我把上面的表达式理解为：”hello“代表了一个地址，并把这个地址赋值给
+p这个指针变量，</p>
+<p>我会认为 p = “hello”
+，字符串”hello“被转换成地址的形式，而p的值就是这个地址，复习C语言的时，在实现strcpy考虑参数类型的时候，我想的函数参数类型。和标准库里的不一样，因为这个冲突，我对自己的字符认知产生了怀疑，然后回头再看了一遍翁凯老师的C语言慕课,有了新的收获。</p>
+<p>就如同上面的总结，形如”hello“的值符串常量，会被编译器变成一个数组放在代码段，然后char
+*p = “hello”,语句的效果是，将”hello“所在数组的首地址赋值给p。</p>
+<p>这里也解释了一种情况，我想要输出单个字符的时候需要用到*p，而不是p.这个点用我之前的想法是解释不通的。</p>
+<p>总结一句话
+，字符串以数组的形式存在，以数组或指针的形式访问。这个点算是我新的收获了；</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>test</title>
+    <url>/2020/10/11/test/</url>
+    <content><![CDATA[<p> <br>
+<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
 ]]></content>
   </entry>
   <entry>
@@ -156,40 +338,6 @@ parameters”。所以，无论在C还是C++中，若函数不接受任何参数
 //错误</p>
 <h4 id="小结">小结</h4>
 <p>正如博主所说，void体现了一种抽象,void*很类似面向对象里的泛型。面向过程语言也有面向对象的思想，面向过程也可以写面向对象的东西。语言只是工具，编程重要的是思想。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>C中的字符串</title>
-    <url>/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<p>下面的内容根据翁凯老师的C语言慕课的内容总结所得：</p>
-<p>字符串：</p>
-<ul>
-<li>以0结尾的一串字符（结尾字符ascii值为0，’\0’的sacii值为0）</li>
-<li>0(‘\0’)标志值符串的结束但它不是字符串的一部分
-<ul>
-<li>计算字符串长度的时候不包含这个0，但是它是占一字节的空间的，具体问题具体分析。</li>
-</ul></li>
-<li>字符串以数组的形式存在，以数组或指针的形式访问</li>
-<li>特殊的一点，字符串字面量可以用来初始化字符数组</li>
-</ul>
-<p>字符串常量：</p>
-<ul>
-<li>形如”hello”</li>
-<li>“hello”会被编译器变成一个字符数组放在某处(rodata段,只读)，这个数组长度是6，结尾有表示结束的0(‘\0’)</li>
-</ul>
-<p>我对字符串的误解是在字符串常量这个点，没有理解C中字符串常量的存储方式</p>
-<p>例如，char *p = “hello”;</p>
-<p>根据一般的指针思想，我把上面的表达式理解为：”hello“代表了一个地址，并把这个地址赋值给
-p这个指针变量，</p>
-<p>我会认为 p = “hello”
-，字符串”hello“被转换成地址的形式，而p的值就是这个地址，复习C语言的时，在实现strcpy考虑参数类型的时候，我想的函数参数类型。和标准库里的不一样，因为这个冲突，我对自己的字符认知产生了怀疑，然后回头再看了一遍翁凯老师的C语言慕课,有了新的收获。</p>
-<p>就如同上面的总结，形如”hello“的值符串常量，会被编译器变成一个数组放在代码段，然后char
-*p = “hello”,语句的效果是，将”hello“所在数组的首地址赋值给p。</p>
-<p>这里也解释了一种情况，我想要输出单个字符的时候需要用到*p，而不是p.这个点用我之前的想法是解释不通的。</p>
-<p>总结一句话
-，字符串以数组的形式存在，以数组或指针的形式访问。这个点算是我新的收获了；</p>
 ]]></content>
   </entry>
   <entry>
@@ -318,108 +466,6 @@ mode；否则使用传统的GOPATH mode。</td>
 ]]></content>
   </entry>
   <entry>
-    <title>test</title>
-    <url>/2020/10/11/test/</url>
-    <content><![CDATA[<p> <br>
-<a id="more"></a> <img src="/2020/10/11/test/head.jpg" alt="头像"></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>CMake笔记</title>
-    <url>/2024/04/19/CMake%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<p>平时项目中会涉及一些的CMake脚本的修改,但都是需要改的地方去现查现或者参考已经写好的部分,在开始系统的看一些入门要点,然后记录一下</p>
-<h2 id="cmake常用指令">CMake常用指令</h2>
-<ul>
-<li><h4 id="cmake_minimum_required---指定cmake的最小版本要求">cmake_minimum_required
-- 指定CMake的最小版本要求</h4>
-<ul>
-<li><p>语法: <strong>cmake_minimum_required(VERSION versionNumber
-[FATAL_ERROR])</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#cmake最小版本要求3.0.1</span><br><span class="line">cmake_minimum_required(VERSION 3.0.1)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="project---定义工程名称并可指定工程支持的语言">project -
-定义工程名称，并可指定工程支持的语言</h4>
-<ul>
-<li><p>语法：<strong>project(projectName [CXX] [C] [JAVA])</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#指定工程名为XXController</span><br><span class="line">project(XXController)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="set--显示定义变量">set -显示定义变量</h4>
-<ul>
-<li><p>语法：<strong>set(var [value] [cache type docstring
-[force]])</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#定义SRC变量， 其值为main.cpp test.cpp</span><br><span class="line">set(SRC main.cpp test.cpp)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="include_directories--向工程添加多个特定的库文件搜索路径">include_directories
--向工程添加多个特定的库文件搜索路径</h4>
-<ul>
-<li><p>语法：<strong>inclide_directories([AFTER|BEFOR] [SYSTEM] dir1
-dir2 ...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将 &#x2F;usr&#x2F;include&#x2F;myincludeFolder 和 .&#x2F;include 添加到头文件搜索路径</span><br><span class="line">include_directories(&#x2F;usr&#x2F;include&#x2F;myincludeFolder .&#x2F;include)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="link_directories--向工程添加多个特定的库文件搜索路径">link_directories
--向工程添加多个特定的库文件搜索路径</h4>
-<ul>
-<li><p>语法：<strong>link_directories(dir1 dir2 ...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将&#x2F;usr&#x2F;lib&#x2F;mylibFolder和.&#x2F;lib添加到库文件搜索路径</span><br><span class="line">link_directories(&#x2F;usr&#x2F;lib&#x2F;mylibFolder .&#x2F;lib)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="add_library--生成库文件">add_library -生成库文件</h4>
-<ul>
-<li><p>语法：<strong>add_library(libname [SHARED|STATIC|MODULE]
-[EXCLUDE_FROM_ALL] source1 source2 ...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#通过变量 SRC 生成 libHello.so 库</span><br><span class="line">add_libaray(libHello SHARED $&#123;SRC&#125;)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="add_compile_options--添加编译选项">add_compile_options
--添加编译选项</h4>
-<ul>
-<li><p>语法：<strong>add_compile_options(&lt;option&gt;
-...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加编译选项 -Wall -std&#x3D;c++11 -o2</span><br><span class="line">add_compile_options(-Wall -std&#x3D;c++11 -o2)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="add_exectuable--生成可执行文件">add_exectuable
--生成可执行文件</h4>
-<ul>
-<li><p>语法：<strong>add_exectuable(exeName source1 source2
-...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#编译main.cpp 生成可执行文件</span><br><span class="line">add_exectuable(main main.cpp)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="target_link_libraries--为target添加需要链接的共享库">target_link_libraries
--为target添加需要链接的共享库</h4>
-<ul>
-<li><p>语法：<strong>target_link_libraries(target library1&lt;debug |
-optimized&gt; ...)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#将hello动态库文件链接到可执行文件main</span><br><span class="line">target_link_libraries(main hello)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="add_subdirectory--向当前工程添加存放源文件的子目录并可以指定中间二进制和目标二进制存放的位置">add_subdirectory
--向当前工程添加存放源文件的子目录，并可以指定中间二进制和目标二进制存放的位置</h4>
-<ul>
-<li><p>语法：<strong>add_subdirectory(sourceDir [binaryDir]
-[EXCLUDE_FROM_ALL])</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加src子目录</span><br><span class="line">add_subdirectory(src)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><h4 id="aux_source_directory--发现一个目录下所有源代码文件并将列表存储在一个变量中这个指令临时被用来自动构建源文件列表">aux_source_directory
--发现一个目录下所有源代码文件并将列表存储在一个变量中，这个指令临时被用来自动构建源文件列表</h4>
-<ul>
-<li><p>语法：<strong>aux_source_directory(dir var)</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#定义src变量，其值为当前目录下所有的源代码文件</span><br><span class="line">add_subdirectory(src)</span><br><span class="line"># 编译src变量所代表的源代码文件，生成main可执行文件</span><br><span class="line">add_executable(main $&#123;src&#125;)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-</ul>
-<h2 id="cmake常用变量">CMake常用变量</h2>
-<ul>
-<li><p>CMAKE_C_FLAGS: gcc编译选项</p></li>
-<li><p>CMAKE_CXX_FLAGS: g++编译选项</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#在CMAKE_CXX_FLAGS选项追加-sdt&#x3D;c++11</span><br><span class="line">set(CMAKE_CXX_FLAGS &quot;$&#123;CMAKE_CXX_FLAGS&#125; -std&#x3D;c++11&quot;)</span><br></pre></td></tr></table></figure></li>
-<li><p>CMAKE_BUILD_TYPE: 编译类型(Debug Release)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#设置编译类型为Debug</span><br><span class="line">set(CMAKE_BUILD_TYPE Debug)</span><br></pre></td></tr></table></figure></li>
-<li><p>CMAKE_C_COMPILER: 指定C编译器</p></li>
-<li><p>CMAKE_CXX_COMPILER:指定c++编译器</p></li>
-<li><p>EXECUTEABLE_OUTPUT_PATH:指定可执行文件的输出路径</p></li>
-<li><p>LIBRARY_OUTPUT_PATH:库文件输出的存放路径</p></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>对C中函数名和数组名的一些理解</title>
     <url>/2022/04/23/%E5%AF%B9C%E4%B8%AD%E5%87%BD%E6%95%B0%E5%90%8D%E5%92%8C%E6%95%B0%E7%BB%84%E5%90%8D%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p> </p>
@@ -466,78 +512,6 @@ optimized&gt; ...)</strong></p>
 <p>p表示的是一个<strong>指向一个元素类型为整数，元素个数为5的内存块的指针</strong></p>
 <p>到这里，虽然他们的数据内容一致，但还要注意一下数据的类型：
 在数组上尤其是，因为数组指针的操做平时还是有用到的，函数指针除了用来引用函数，也不会去做一些类似数组指针的操作，而且有些操做也不允许。。。。。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>回溯算法--子列和问题</title>
-    <url>/2022/04/23/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95-%E5%AD%90%E5%88%97%E5%92%8C%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p> <br>
-<a id="more"></a></p>
-<p>参考文章: https://www.cnblogs.com/lv88/p/4491796.html</p>
-<h3 id="正文">正文:</h3>
-<p>算法课的第四章的第一个实验,做之前看了一下算法网课的介绍,主要思想就是遍历子集树,在遍历的时候会检查当前节点是否符合约束条件,不符合的化就放弃当前节点以下的结果集;
-可能是当初数据结构没学好,就非递归构造树的遍历都费了我老鼻子劲了;
-记录下做题的思路吧; 先上代码:</p>
-<p>……………栈的相关操作就不写了,太占篇幅;</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">typedef struct StackNode&#123;</span><br><span class="line">	int i;&#x2F;&#x2F;当前节点对应数组第i号元素(0开始)</span><br><span class="line">	int x;&#x2F;&#x2F;第i号节点是否被选中</span><br><span class="line">	struct StackNode *next;</span><br><span class="line">&#125;node;&#x2F;&#x2F;结果集节点结构</span><br><span class="line"></span><br><span class="line">node* init();&#x2F;&#x2F;栈初始化</span><br><span class="line">void push(node *, int ,int);</span><br><span class="line">node pop(node *);</span><br><span class="line">int isEmpty(node *);</span><br><span class="line">void Destory(node *);</span><br><span class="line">void sort(int *,int);</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	int n,goal,tg,ti &#x3D; -1,ts &#x3D; 0,h;</span><br><span class="line">	node *top,last;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;goal);</span><br><span class="line">	int a[n];</span><br><span class="line">	int s[n];</span><br><span class="line">	for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">		scanf(&quot;%d&quot;,&amp;a[i]);</span><br><span class="line">		s[i] &#x3D; -1;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(a,n);</span><br><span class="line">	node *plist &#x3D; init();</span><br><span class="line">	tg &#x3D; goal;</span><br><span class="line">	while(1)&#123;	</span><br><span class="line">		if(isEmpty(plist))&#123;&#x2F;&#x2F;栈空时的操作</span><br><span class="line">			if(0 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第二次栈空操作</span><br><span class="line">				push(plist,0,0);</span><br><span class="line">				plist-&gt;i &#x3D; 1;</span><br><span class="line">			&#125;else if(-1 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第一次栈空操作</span><br><span class="line">				if(a[0]&lt;&#x3D;tg)&#123;&#x2F;&#x2F;满足约束条件,取当前节点元素,x置1</span><br><span class="line">					push(plist,0,1);</span><br><span class="line">					plist-&gt;i &#x3D; 0;</span><br><span class="line">					s[0] &#x3D; 1;</span><br><span class="line">					tg -&#x3D; a[plist-&gt;next-&gt;i];</span><br><span class="line">				&#125;else&#123;&#x2F;&#x2F;不满足条件,不取,x置0</span><br><span class="line">					push(plist,0,0);</span><br><span class="line">					plist-&gt;i &#x3D; 1;</span><br><span class="line">				&#125;	</span><br><span class="line">			&#125;else&#x2F;&#x2F;第三次栈空结果集遍历完成,退出循环</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">		top &#x3D; plist-&gt;next;</span><br><span class="line">		ti &#x3D; top-&gt;i;</span><br><span class="line">		if(ti &#x3D;&#x3D; n-1)&#123;&#x2F;&#x2F;当前路径走到结果集底部时,此路径不是有效解,回溯,寻找其他解</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">			s[ti] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti]*last.x;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		if(last.i &#x3D;&#x3D; ti+1)&#123;&#x2F;&#x2F;检查是否有回溯</span><br><span class="line">			if(1 &#x3D;&#x3D; last.x)&#123;&#x2F;&#x2F;上一轮回溯前的路径是走的1还是0(从左子树回溯到当前节点的还是右子树)</span><br><span class="line">				push(plist,ti+1,0);</span><br><span class="line">				s[ti+1] &#x3D; 0;</span><br><span class="line">			&#125;else&#123;&#x2F;&#x2F;右子树回溯的,当前结点结果集遍历完成,回溯到上一层;</span><br><span class="line">				last &#x3D; pop(plist);</span><br><span class="line">				tg +&#x3D; a[ti]*last.x;</span><br><span class="line">				s[ti] &#x3D; 0;</span><br><span class="line">			&#125;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;	</span><br><span class="line">		push(plist,ti+1,1);&#x2F;&#x2F;默认先录入当前节点元素</span><br><span class="line">		tg -&#x3D; a[ti+1];		</span><br><span class="line">		if(tg &gt;&#x3D; 0)&#123;</span><br><span class="line">			s[ti+1] &#x3D; 1;			</span><br><span class="line">		&#125;else&#123;&#x2F;&#x2F;不满足条件,回溯</span><br><span class="line">			s[ti+1] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti+1];</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">		&#125;</span><br><span class="line">		if(tg &#x3D;&#x3D; 0)</span><br><span class="line">			break;			</span><br><span class="line">	&#125;</span><br><span class="line">	Destory(plist);</span><br><span class="line">	if(tg)</span><br><span class="line">		printf(&quot;No Solution!&quot;);</span><br><span class="line">	else</span><br><span class="line">		for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">			if(1 &#x3D;&#x3D; s[i])</span><br><span class="line">				printf(&quot;%d &quot;,a[i]);</span><br><span class="line">		&#125;		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个问题是oj上的一道题但是我写的老是超时,所以就在百度上看到了参考文章,给了我一些启发,但是对输入排序是会改变结果输出的顺序的,然后oj会判错,因为不加排序的时候会显示超时,加了之后直接就判错了………,但是排序后应该是会有影响的.</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>设计模式随想</title>
-    <url>/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/</url>
-    <content><![CDATA[<p> </p>
-<a id="more"></a>
-<h2 id="如何解决复杂性">如何解决复杂性：</h2>
-<ul>
-<li>分解</li>
-<li>抽象</li>
-</ul>
-<h2 id="软件设计的目标复用性">软件设计的目标：复用性</h2>
-<h2 id="设计模式的一些原则">设计模式的一些原则</h2>
-<h3 id="依赖倒置原则">依赖倒置原则</h3>
-<ul>
-<li>高层模块(稳定)不应该依赖低层(变化)模块，应该依赖抽象</li>
-<li>抽象(稳定)不应该依赖于实现细节(变化)， 实现细节应该依赖抽象</li>
-</ul>
-<h3 id="开闭原则">开闭原则：</h3>
-<ul>
-<li>对拓展开放，对修改封闭，面对新需求尽量不修改或少修改已有代码</li>
-</ul>
-<h3 id="单一职责原则">单一职责原则</h3>
-<ul>
-<li><p>一个类应该仅有一个引起它变化的原因（减少耦合）</p></li>
-<li><p>变化的方向隐含类的责任</p></li>
-</ul>
-<h3 id="里氏替换原则">里氏替换原则</h3>
-<ul>
-<li>子类必须能替换他们的基类（is a）</li>
-<li>public继承表达类型抽象</li>
-</ul>
-<h3 id="接口隔离原则">接口隔离原则</h3>
-<ul>
-<li>接口应该小而完备（谨慎提供对外接口）</li>
-<li>不应该强迫客户程序以来他们不用的方法</li>
-</ul>
-<h3 id="优先使用对象组合而不是类继承">优先使用对象组合，而不是类继承</h3>
-<ul>
-<li>类继承为“白盒复用”，
-对象组合为“黑盒复用”--屏蔽用户的感知，减少不必要的依赖（耦合）</li>
-<li>继承在某种程度上破坏了封装性，子类父类耦合度高</li>
-<li>对象组合则只要求被组合的对象具有良好定义的接口，耦合相对较低</li>
-</ul>
-<h3 id="封装变化点">封装变化点</h3>
-<ul>
-<li>使用封装来创建对象之间的分界层，让设计者可以在分界层的一侧进行修改，而不会对另一侧产生不良的影响，从而实现层次间的松耦合。（一种抽象思维的运用）</li>
-</ul>
-<h3 id="针对接口编程而不是针对实现编程">针对接口编程，而不是针对实现编程</h3>
-<ul>
-<li>不将变量类型生命为某个特定的具体类，而是声明为某个接口。</li>
-<li>客户程序无需获取对象的具体类型，只需要知道对象所具有的接口（减少客户程序对自身的依赖，降低耦合）</li>
-<li>减少系统中各部分的依赖关系，从而实现“高内聚、低耦合”的类型设计方案</li>
-</ul>
-<h2 id="小结">小结</h2>
-<p>以目前的层次来看，设计模式的8大设计模式可以总结为：以减少耦合、降低依赖，使用抽象这几个思想来指导面向对象程序的编写，运用这些思想的目的就是使程序面对变化时，能以较小的程序变更来实现需求的变更，提高程序的复用性、开发效率。</p>
 ]]></content>
   </entry>
   <entry>
@@ -764,6 +738,78 @@ b8 05 79 6a 4d 67 8d 6c 24 18 68 f4 8d 04 08 c3
 90 90 90 90 90 /* ‘90’<em>509 </em>/ b8 05 79 6a 4d 8d 6c 24 18 68 f4 8d
 04 08 c3 58 37 68 55
 到这里实验三结束，这个实验能完成主要还是博主写的真的很详细，不然自己写不知到要摸索到什么时候。。。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>回溯算法--子列和问题</title>
+    <url>/2022/04/23/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95-%E5%AD%90%E5%88%97%E5%92%8C%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p> <br>
+<a id="more"></a></p>
+<p>参考文章: https://www.cnblogs.com/lv88/p/4491796.html</p>
+<h3 id="正文">正文:</h3>
+<p>算法课的第四章的第一个实验,做之前看了一下算法网课的介绍,主要思想就是遍历子集树,在遍历的时候会检查当前节点是否符合约束条件,不符合的化就放弃当前节点以下的结果集;
+可能是当初数据结构没学好,就非递归构造树的遍历都费了我老鼻子劲了;
+记录下做题的思路吧; 先上代码:</p>
+<p>……………栈的相关操作就不写了,太占篇幅;</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">typedef struct StackNode&#123;</span><br><span class="line">	int i;&#x2F;&#x2F;当前节点对应数组第i号元素(0开始)</span><br><span class="line">	int x;&#x2F;&#x2F;第i号节点是否被选中</span><br><span class="line">	struct StackNode *next;</span><br><span class="line">&#125;node;&#x2F;&#x2F;结果集节点结构</span><br><span class="line"></span><br><span class="line">node* init();&#x2F;&#x2F;栈初始化</span><br><span class="line">void push(node *, int ,int);</span><br><span class="line">node pop(node *);</span><br><span class="line">int isEmpty(node *);</span><br><span class="line">void Destory(node *);</span><br><span class="line">void sort(int *,int);</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	int n,goal,tg,ti &#x3D; -1,ts &#x3D; 0,h;</span><br><span class="line">	node *top,last;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;goal);</span><br><span class="line">	int a[n];</span><br><span class="line">	int s[n];</span><br><span class="line">	for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">		scanf(&quot;%d&quot;,&amp;a[i]);</span><br><span class="line">		s[i] &#x3D; -1;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(a,n);</span><br><span class="line">	node *plist &#x3D; init();</span><br><span class="line">	tg &#x3D; goal;</span><br><span class="line">	while(1)&#123;	</span><br><span class="line">		if(isEmpty(plist))&#123;&#x2F;&#x2F;栈空时的操作</span><br><span class="line">			if(0 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第二次栈空操作</span><br><span class="line">				push(plist,0,0);</span><br><span class="line">				plist-&gt;i &#x3D; 1;</span><br><span class="line">			&#125;else if(-1 &#x3D;&#x3D; plist-&gt;i)&#123;&#x2F;&#x2F;第一次栈空操作</span><br><span class="line">				if(a[0]&lt;&#x3D;tg)&#123;&#x2F;&#x2F;满足约束条件,取当前节点元素,x置1</span><br><span class="line">					push(plist,0,1);</span><br><span class="line">					plist-&gt;i &#x3D; 0;</span><br><span class="line">					s[0] &#x3D; 1;</span><br><span class="line">					tg -&#x3D; a[plist-&gt;next-&gt;i];</span><br><span class="line">				&#125;else&#123;&#x2F;&#x2F;不满足条件,不取,x置0</span><br><span class="line">					push(plist,0,0);</span><br><span class="line">					plist-&gt;i &#x3D; 1;</span><br><span class="line">				&#125;	</span><br><span class="line">			&#125;else&#x2F;&#x2F;第三次栈空结果集遍历完成,退出循环</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">		top &#x3D; plist-&gt;next;</span><br><span class="line">		ti &#x3D; top-&gt;i;</span><br><span class="line">		if(ti &#x3D;&#x3D; n-1)&#123;&#x2F;&#x2F;当前路径走到结果集底部时,此路径不是有效解,回溯,寻找其他解</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">			s[ti] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti]*last.x;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		if(last.i &#x3D;&#x3D; ti+1)&#123;&#x2F;&#x2F;检查是否有回溯</span><br><span class="line">			if(1 &#x3D;&#x3D; last.x)&#123;&#x2F;&#x2F;上一轮回溯前的路径是走的1还是0(从左子树回溯到当前节点的还是右子树)</span><br><span class="line">				push(plist,ti+1,0);</span><br><span class="line">				s[ti+1] &#x3D; 0;</span><br><span class="line">			&#125;else&#123;&#x2F;&#x2F;右子树回溯的,当前结点结果集遍历完成,回溯到上一层;</span><br><span class="line">				last &#x3D; pop(plist);</span><br><span class="line">				tg +&#x3D; a[ti]*last.x;</span><br><span class="line">				s[ti] &#x3D; 0;</span><br><span class="line">			&#125;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;	</span><br><span class="line">		push(plist,ti+1,1);&#x2F;&#x2F;默认先录入当前节点元素</span><br><span class="line">		tg -&#x3D; a[ti+1];		</span><br><span class="line">		if(tg &gt;&#x3D; 0)&#123;</span><br><span class="line">			s[ti+1] &#x3D; 1;			</span><br><span class="line">		&#125;else&#123;&#x2F;&#x2F;不满足条件,回溯</span><br><span class="line">			s[ti+1] &#x3D; 0;</span><br><span class="line">			tg +&#x3D; a[ti+1];</span><br><span class="line">			last &#x3D; pop(plist);</span><br><span class="line">		&#125;</span><br><span class="line">		if(tg &#x3D;&#x3D; 0)</span><br><span class="line">			break;			</span><br><span class="line">	&#125;</span><br><span class="line">	Destory(plist);</span><br><span class="line">	if(tg)</span><br><span class="line">		printf(&quot;No Solution!&quot;);</span><br><span class="line">	else</span><br><span class="line">		for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">			if(1 &#x3D;&#x3D; s[i])</span><br><span class="line">				printf(&quot;%d &quot;,a[i]);</span><br><span class="line">		&#125;		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个问题是oj上的一道题但是我写的老是超时,所以就在百度上看到了参考文章,给了我一些启发,但是对输入排序是会改变结果输出的顺序的,然后oj会判错,因为不加排序的时候会显示超时,加了之后直接就判错了………,但是排序后应该是会有影响的.</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>设计模式随想</title>
+    <url>/2024/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9A%8F%E6%83%B3/</url>
+    <content><![CDATA[<p> </p>
+<a id="more"></a>
+<h2 id="如何解决复杂性">如何解决复杂性：</h2>
+<ul>
+<li>分解</li>
+<li>抽象</li>
+</ul>
+<h2 id="软件设计的目标复用性">软件设计的目标：复用性</h2>
+<h2 id="设计模式的一些原则">设计模式的一些原则</h2>
+<h3 id="依赖倒置原则">依赖倒置原则</h3>
+<ul>
+<li>高层模块(稳定)不应该依赖低层(变化)模块，应该依赖抽象</li>
+<li>抽象(稳定)不应该依赖于实现细节(变化)， 实现细节应该依赖抽象</li>
+</ul>
+<h3 id="开闭原则">开闭原则：</h3>
+<ul>
+<li>对拓展开放，对修改封闭，面对新需求尽量不修改或少修改已有代码</li>
+</ul>
+<h3 id="单一职责原则">单一职责原则</h3>
+<ul>
+<li><p>一个类应该仅有一个引起它变化的原因（减少耦合）</p></li>
+<li><p>变化的方向隐含类的责任</p></li>
+</ul>
+<h3 id="里氏替换原则">里氏替换原则</h3>
+<ul>
+<li>子类必须能替换他们的基类（is a）</li>
+<li>public继承表达类型抽象</li>
+</ul>
+<h3 id="接口隔离原则">接口隔离原则</h3>
+<ul>
+<li>接口应该小而完备（谨慎提供对外接口）</li>
+<li>不应该强迫客户程序以来他们不用的方法</li>
+</ul>
+<h3 id="优先使用对象组合而不是类继承">优先使用对象组合，而不是类继承</h3>
+<ul>
+<li>类继承为“白盒复用”，
+对象组合为“黑盒复用”--屏蔽用户的感知，减少不必要的依赖（耦合）</li>
+<li>继承在某种程度上破坏了封装性，子类父类耦合度高</li>
+<li>对象组合则只要求被组合的对象具有良好定义的接口，耦合相对较低</li>
+</ul>
+<h3 id="封装变化点">封装变化点</h3>
+<ul>
+<li>使用封装来创建对象之间的分界层，让设计者可以在分界层的一侧进行修改，而不会对另一侧产生不良的影响，从而实现层次间的松耦合。（一种抽象思维的运用）</li>
+</ul>
+<h3 id="针对接口编程而不是针对实现编程">针对接口编程，而不是针对实现编程</h3>
+<ul>
+<li>不将变量类型生命为某个特定的具体类，而是声明为某个接口。</li>
+<li>客户程序无需获取对象的具体类型，只需要知道对象所具有的接口（减少客户程序对自身的依赖，降低耦合）</li>
+<li>减少系统中各部分的依赖关系，从而实现“高内聚、低耦合”的类型设计方案</li>
+</ul>
+<h2 id="小结">小结</h2>
+<p>以目前的层次来看，设计模式的8大设计模式可以总结为：以减少耦合、降低依赖，使用抽象这几个思想来指导面向对象程序的编写，运用这些思想的目的就是使程序面对变化时，能以较小的程序变更来实现需求的变更，提高程序的复用性、开发效率。</p>
 ]]></content>
   </entry>
 </search>
