@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/project/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/project/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/project/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/project/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/project/css/main.css">
+
+
+<link rel="stylesheet" href="/project/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"littleblackdot.github.io","root":"/project/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="&nbsp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C中的void">
+<meta property="og:url" content="https://littleblackdot.github.io/project/2022/04/23/C%E4%B8%AD%E7%9A%84void/index.html">
+<meta property="og:site_name" content="Hexo Blog">
+<meta property="og:description" content="&nbsp;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-04-23T11:15:12.000Z">
+<meta property="article:modified_time" content="2025-09-10T10:09:15.930Z">
+<meta property="article:author" content="LittleBlackDot">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://littleblackdot.github.io/project/2022/04/23/C%E4%B8%AD%E7%9A%84void/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>C中的void | Hexo Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/project/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">LittleBlackDot's</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/project/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/project/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://littleblackdot.github.io/project/2022/04/23/C%E4%B8%AD%E7%9A%84void/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/project/images/avatar.gif">
+      <meta itemprop="name" content="LittleBlackDot">
+      <meta itemprop="description" content="日常杂项笔记">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C中的void
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-23 19:15:12" itemprop="dateCreated datePublished" datetime="2022-04-23T19:15:12+08:00">2022-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-09-10 18:09:15" itemprop="dateModified" datetime="2025-09-10T18:09:15+08:00">2025-09-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&nbsp;</p>
+<span id="more"></span>
+
+<p>参考文章:<a target="_blank" rel="noopener" href="https://www.iteye.com/blog/zhengdl126-1739165">https://www.iteye.com/blog/zhengdl126-1739165</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c">https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</a></p>
+<p>void最初接触当然是在学C的时候，见到的用法就是指明函数无需返回指，在学校计算机系统基础课的malloc_lab(CSAPP里的)里，大量的用到了void类型的指针，在做实验的时候了解了一下void的用法；</p>
+<p>首先当然是百度后看前辈们的分享的知识；</p>
+<h4 id="VOID用法"><a href="#VOID用法" class="headerlink" title="VOID用法:"></a>VOID用法:</h4><ol>
+<li>如果函数没有返回值，那么应声明为void类型;</li>
+<li>如果函数无参数，那么应声明其参数为void；</li>
+<li>如果函数的参数可以是任意类型指针，那么应声明其参数为void * ；</li>
+<li>void不能代表一个真实的变量；</li>
+</ol>
+<hr>
+<h4 id="VOID-使用注意事项："><a href="#VOID-使用注意事项：" class="headerlink" title="VOID*使用注意事项："></a>VOID*使用注意事项：</h4><ol>
+<li>任何类型的指针都可以直接赋值给void* 类型变量；但是，void * 类型的变量作为右值赋给任意类型指针变量时要做类型转换。因为“无类型”可以包容“有类型”，而“有类型”则不能包容“无类型”；（C++适用，C中不适用）</li>
+</ol>
+<p>e.g.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int a = 0;</span><br><span class="line">int *p = &amp;a;</span><br><span class="line">void *vp = NULL;</span><br><span class="line">p = (int *)vp;</span><br><span class="line">vp = p;</span><br></pre></td></tr></table></figure>
+
+<p>在网上百度看一种说法，NULL是((void *) 0),的宏,依据是stdio.h里的声明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#ifndef NULL</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">#define NULL    0</span><br><span class="line">#else  /* __cplusplus */</span><br><span class="line">#define NULL    ((void *)0)</span><br><span class="line">#endif  /* __cplusplus */</span><br><span class="line">#endif  /* NULL */</span><br></pre></td></tr></table></figure>
+
+<p>上面可以看出在C++中NULL是 0，在C中NULL被定义为 (（void*)0 )，在c中void* 类型的值可以直接赋值给任意类型的指针变量，在dev C++分别在.c和.cpp文件里比编译下面这个语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int *p = (void*)0</span><br></pre></td></tr></table></figure>
+
+<p>前者编译后没有任何提示信息，后者会报错…….</p>
+<p>至于为什么c和c++的NULL不一样，stackoverflow里看到了一个问答，里面给出了C和C++对空指针常量(NULL)的不同定义:</p>
+<p>Back in C++03, a null pointer was defined by the ISO specification (§4.10&#x2F;1) as</p>
+<blockquote>
+<p>A null pointer constant is an integral constant expression (5.19) rvalue of integer type that evaluates to zero.</p>
+</blockquote>
+<p>In C, this rule is similar, but is a bit different (§6.3.2.3&#x2F;3):</p>
+<blockquote>
+<p>An integer constant expression with the value 0, or such an expression cast to type <code>void *</code>, is called a null pointer constant.55) If a null pointer constant is converted to a pointer type, the resulting pointer, called a null pointer, is guaranteed to compare unequal to a pointer to any object or function.</p>
+</blockquote>
+<p>看来在c中0和(void*)0都能表示空指针常量，所以在C和C++里都能这样写: <code>int *p = 0;</code>,</p>
+<p>在C++里可以写看起来怪但没有错的语句：<code>int a = NULL;</code>,这里又引出几个nullptr之于NULL的优点。</p>
+<p>如果再看到这里又想不起来就重新看看吧：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c">https://stackoverflow.com/questions/7016861/why-are-null-pointers-defined-differently-in-c-and-c</a></p>
+<ol>
+<li>如果函数没有返回值，那么应声明为void类型;<br>在C语言中，凡不加返回值类型限定的函数，就会被编译器作为返回整型值处理。<br>如果函数无参数,那么应声明其参数为void<br>在C++语言中声明一个这样的函数：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int function(void)&#123;	return 1;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>则进行下面的调用是不合法的：<br>function(2);<br>因为在C++中，函数参数为void的意思是这个函数不接受任何参数。<br>我们在Turbo C 2.0中编译：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;stdio.h&quot;</span><br><span class="line">fun()&#123;</span><br><span class="line">	return 1;</span><br><span class="line">&#125;</span><br><span class="line">main()&#123;</span><br><span class="line">	printf(&quot;%d&quot;,fun(2));</span><br><span class="line">	getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译正确且输出1，这说明，在C语言中，可以给无参数的函数传送任意类型的参数，但是在C++编译器中编译同样的代码则会出错。在C++中，不能向无参数的函数传送任何参数，出错提示“’fun’ : function does not take 1 parameters”。所以，无论在C还是C++中，若函数不接受任何参数，一定要指明参数为void。<br>\3. void不能代表一个真实的变量<br>void a; &#x2F;&#x2F;错误<br>function(void a); &#x2F;&#x2F;错误</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>正如博主所说，void体现了一种抽象,void*很类似面向对象里的泛型。面向过程语言也有面向对象的思想，面向过程也可以写面向对象的东西。语言只是工具，编程重要的是思想。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/project/2022/04/23/go%E5%8C%85%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%9D%91/" rel="prev" title="go包管理机制的一个小坑">
+      <i class="fa fa-chevron-left"></i> go包管理机制的一个小坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/project/2022/04/23/C%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="next" title="C中的字符串">
+      C中的字符串 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#VOID%E7%94%A8%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">VOID用法:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VOID-%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">VOID*使用注意事项：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LittleBlackDot</p>
+  <div class="site-description" itemprop="description">日常杂项笔记</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/project/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LittleBlackDot</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/project/lib/anime.min.js"></script>
+  <script src="/project/lib/velocity/velocity.min.js"></script>
+  <script src="/project/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/project/js/utils.js"></script>
+
+<script src="/project/js/motion.js"></script>
+
+
+<script src="/project/js/schemes/pisces.js"></script>
+
+
+<script src="/project/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/project/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/project/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/project/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/project/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/project/css/main.css">
+
+
+<link rel="stylesheet" href="/project/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"littleblackdot.github.io","root":"/project/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="&nbsp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP笔记-链接">
+<meta property="og:url" content="https://littleblackdot.github.io/project/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/index.html">
+<meta property="og:site_name" content="Hexo Blog">
+<meta property="og:description" content="&nbsp;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://littleblackdot.github.io/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/%E5%85%B8%E5%9E%8BELF%E5%8F%AF%E9%87%8D%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6.jpg">
+<meta property="og:image" content="https://littleblackdot.github.io/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/ELF%E5%A4%B4%E8%A7%A3%E6%9E%90%E5%AE%9E%E4%BE%8B.png">
+<meta property="article:published_time" content="2024-04-28T14:25:47.000Z">
+<meta property="article:modified_time" content="2025-09-10T10:09:15.919Z">
+<meta property="article:author" content="LittleBlackDot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://littleblackdot.github.io/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/%E5%85%B8%E5%9E%8BELF%E5%8F%AF%E9%87%8D%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6.jpg">
+
+<link rel="canonical" href="https://littleblackdot.github.io/project/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>CSAPP笔记-链接 | Hexo Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/project/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">LittleBlackDot's</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/project/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/project/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://littleblackdot.github.io/project/2024/04/28/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/project/images/avatar.gif">
+      <meta itemprop="name" content="LittleBlackDot">
+      <meta itemprop="description" content="日常杂项笔记">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CSAPP笔记-链接
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-04-28 22:25:47" itemprop="dateCreated datePublished" datetime="2024-04-28T22:25:47+08:00">2024-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-09-10 18:09:15" itemprop="dateModified" datetime="2025-09-10T18:09:15+08:00">2025-09-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&nbsp;</p>
+<span id="more"></span>
+<p>csapp有空会读一下，但是总是断断续续的再读，这样看完的东西太容易忘了，梳理记录一下，加深理解，后面回看的时候也方便快速回忆。</p>
+<h2 id="编译器驱动程序"><a href="#编译器驱动程序" class="headerlink" title="编译器驱动程序"></a>编译器驱动程序</h2><h3 id="源文件到可执行目标文件的过程"><a href="#源文件到可执行目标文件的过程" class="headerlink" title="源文件到可执行目标文件的过程"></a>源文件到可执行目标文件的过程</h3><ul>
+<li>$main.c(源文件)\xrightarrow{预处理器(cpp)}main.i(中间文件)\xrightarrow{编译器(cc1)}main.s(汇编文件)$<br>                      $\xrightarrow{汇编器(as)}main.o(可重定位目标文件)\xrightarrow{链接器ld}a.out(可执行目标文件)$</li>
+<li>过程中的工具链:<ul>
+<li>预处理器：将对代码做一些预处理操作如：宏定义的文本替换，将头文件的内容复制到include处等</li>
+<li>编译器：将.i文件翻译成汇编文件格式为.s，文件内容为可阅读的汇编代码，因为汇编代码与cpu的指令集相关联，所以是不可移植的。</li>
+<li>汇编器：将.s文件翻译成机器码文件，不可阅读（可以使用objdump来将.o文件转换为汇编格式）</li>
+<li>链接器：将多个.o文件链接合并成一个可执行文件，过程中涉及符号解析，重定位。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Linux中可执行目标程序（不依赖动态库）的运行过程"><a href="#Linux中可执行目标程序（不依赖动态库）的运行过程" class="headerlink" title="Linux中可执行目标程序（不依赖动态库）的运行过程"></a>Linux中可执行目标程序（不依赖动态库）的运行过程</h3><ol>
+<li>shell中输入运行可执行文件</li>
+<li>shell调用操作系统加载器(操作系统API–exec函数族也是这个原理)</li>
+<li>加载器将可执行目标文件中的代码和数据复制到内存中</li>
+<li>加载器跳转到程序的入口点(_start函数)，执行_start函数.  _start函数是系统目标文件ctrl.o中定义的，对所有C程序都一样</li>
+<li>_start函数调用系统启动函数 __libc_start_main(定义在libc.so中),初始化执行环境，然后调用用户层的main函数。</li>
+</ol>
+<h3 id="目标文件"><a href="#目标文件" class="headerlink" title="目标文件"></a>目标文件</h3><p>目标文件有三种：</p>
+<ul>
+<li>可重定位目标文件：.o文件，包含二进制代码和数据，包含各种节(section)：代码节、数据节等等，每个节都是一个连续的二进制字节序列。</li>
+<li>可执行目标文件：应用程序文件，由一系列可重定位目标文件合可共享目标文件(非必须)合并组成</li>
+<li>共享目标文件：静态或动态库，可由一系列可重定位目标文件生成</li>
+</ul>
+<p>目标文件在不同系统上具有不同格式。现代x86-64Linux和Unix采用ELF（Executable and Linkable Format，执行可链接格式）格式，Windows采用PE（Portable Executable, 可移植可执行）格式</p>
+<h3 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h3><p>静态链接器（Linux上为ld）以一组可重定位目标文件为输入，生成一个完全链接的可执行目标程序。</p>
+<h3 id="可重定位目标文件"><a href="#可重定位目标文件" class="headerlink" title="可重定位目标文件"></a>可重定位目标文件</h3><img src="/CSAPP笔记-链接/典型ELF可重定位目标文件.jpg" alt="典型的ELF可重定位目标文件结构" style="zoom:30%;" />
+
+<p>上图来自CSAPP，描述了一个ELF可重定位目标文件的结构。大致结构就是以一个ELF头开始，后跟许多“节”，最后跟着一个“节头部表”。每个“节”的大小和位置都是由节头部表描述的，每个节都拥有一个固定大小的条目。</p>
+<ul>
+<li><p><strong>ELF头内容</strong></p>
+<ul>
+<li><p>“ELF头”以一个16字节的序列开始，该序列描述了生成该文件的系统的字的大小和字节顺序.</p>
+</li>
+<li><p>剩余的部分包含：ELF头的大小、目标文件的类型、机器类型、节头部表的文件偏移、节头部表中条目的大小和数目。</p>
+</li>
+<li><p>用readelf解析elf头的例子</p>
+<p><img src="/CSAPP%E7%AC%94%E8%AE%B0-%E9%93%BE%E6%8E%A5/ELF%E5%A4%B4%E8%A7%A3%E6%9E%90%E5%AE%9E%E4%BE%8B.png" alt="readelf解析ELF头"></p>
+</li>
+</ul>
+</li>
+<li><p>剩余各个“节”</p>
+<ul>
+<li>.text节：已编译程序的机器代码</li>
+<li>.rodata节：只读数据，例如一些字符串常量、switch语句的跳转表</li>
+<li>.data节：已初始化的全局变量和静态C变量。局部变量在运行时保存在栈中  ，既不在.data节也不再.bss节。</li>
+<li>.bss节：未初始化的全局和静态C变量、被初始化为0的全局或静态变量。在目标文件中不占实际空间，仅仅为一个占位符。在目标文件中，为初始化变量在程序运行前会分配在内存中程序的数据段中，且初始化为0；（注：这里的占位符应该是节头部表中会有.bss节的条目，且符号表中会记录属于.bss段的数据，所以目标文件中可以不存在.bss段实际内容）</li>
+<li>.symtab：符号表。存放在程序中定义和引用的函数和全局变量的信息（即除了栈变量的全部变量信息）。每个可重定位目标文件都会存在一份符号表</li>
+<li>.rel.text：一个.text节中的列表（描述代码段的重定位信息，用于对.text代码段进行重定位），当链接器把这个目标文件和其他文件组合时需要修改这些位置（重定位）。一般而言任何外部函数和引用全局变量的指令都需要修改。 </li>
+<li>.rel.data：被模块引用或定义的所有全局变量的重定位信息（描述数据段的重定位信息，用于对.data数据段进行重定位）</li>
+<li>.debug：一个调试符号表，其条目是程序中定义的局部变量和类型定义，程序中定义和引用的全局变量，以及原始的C源文件。只有以-g选项编译程序才会有这张表</li>
+<li>.line：原始C源文件中的行号和.text节中机器指令之间的映射。也是只有以-g选项编译才会有。</li>
+<li>.strtab:一个字符串表，其内容包含.symtab和.debug节中的符号，以及节头部中的节名字。是一个以null结尾的字符串序列。</li>
+</ul>
+</li>
+</ul>
+<h3 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h3><p>​	每个可重定位目标文件目标模块m都存在一个符号表(.symtab)，它包含m定义和引用的符号，一般有三种不同的符号：</p>
+<ul>
+<li>有在m中定义并可以被其他模块引用的的全局符号，对应非静态函数和全局变量</li>
+<li>其他模块定义并在m中被引用的全局符号（也叫外部符号），对应其他模块定义的非静态函数和全局变量</li>
+<li>只在m中被引用且定义在m中的局部符号，对应static修饰的函数和全局变量。</li>
+</ul>
+<p>非静态的局部变量的生存期和所在的栈帧相关，不记录在符号表中。</p>
+<h4 id="符号表"><a href="#符号表" class="headerlink" title="符号表"></a>符号表</h4><p>符号表由汇编器根据.s文件中的符号（编译器输出的）构造的，.symtab节中包含ELF符号表。这张表包含一种特殊数据结构的数组。这种数据结构的格式如下(定义在&#x2F;usr&#x2F;include&#x2F;elf.h文件中)：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">  Elf64_Word	st_name;		/* Symbol name (string tbl index) */</span><br><span class="line">  unsigned char	st_info;		/* Symbol type and binding */</span><br><span class="line">  unsigned char st_other;		/* Symbol visibility */</span><br><span class="line">  Elf64_Section	st_shndx;		/* Section index */</span><br><span class="line">  Elf64_Addr	st_value;		/* Symbol value */</span><br><span class="line">  Elf64_Xword	st_size;		/* Symbol size */</span><br><span class="line">&#125; Elf64_Sym;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="链接静态库"><a href="#链接静态库" class="headerlink" title="链接静态库"></a>链接静态库</h3><h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><h3 id="动态库"><a href="#动态库" class="headerlink" title="动态库"></a>动态库</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/project/2024/04/19/CMake%E7%AC%94%E8%AE%B0/" rel="prev" title="CMake笔记">
+      <i class="fa fa-chevron-left"></i> CMake笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">编译器驱动程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E6%96%87%E4%BB%B6%E5%88%B0%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">源文件到可执行目标文件的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E4%B8%AD%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9B%AE%E6%A0%87%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%8D%E4%BE%9D%E8%B5%96%E5%8A%A8%E6%80%81%E5%BA%93%EF%BC%89%E7%9A%84%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Linux中可执行目标程序（不依赖动态库）的运行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">静态链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%87%8D%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text">可重定位目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%A7%A3%E6%9E%90"><span class="nav-number">1.6.</span> <span class="nav-text">符号解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">符号表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5%E9%9D%99%E6%80%81%E5%BA%93"><span class="nav-number">1.7.</span> <span class="nav-text">链接静态库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="nav-number">1.8.</span> <span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93"><span class="nav-number">1.9.</span> <span class="nav-text">动态库</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LittleBlackDot</p>
+  <div class="site-description" itemprop="description">日常杂项笔记</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/project/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LittleBlackDot</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/project/lib/anime.min.js"></script>
+  <script src="/project/lib/velocity/velocity.min.js"></script>
+  <script src="/project/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/project/js/utils.js"></script>
+
+<script src="/project/js/motion.js"></script>
+
+
+<script src="/project/js/schemes/pisces.js"></script>
+
+
+<script src="/project/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
