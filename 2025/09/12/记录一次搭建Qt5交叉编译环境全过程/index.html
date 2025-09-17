@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"littleblackdot.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="&nbsp; ​	最近我们的一个项目在找新的硬件平台代替现有的，给到我这边一个新的系统，也是终于看到弃用现在的半成品jetson的希望了。平台更换涉及项目移植，所以需要重新搭建一下开发环境，之前一直的编译都是直接在jetson上编译的，方便是方便，但是有一些不稳定因素。也尝试过在自己虚拟机里搭建交叉编译环境，折腾一两周，能编出来程序，因为要结合算法库的问题跑不起来，只搞了一个半成品。这里借助之前折">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录一次搭建Qt5交叉编译环境全过程">
+<meta property="og:url" content="https://littleblackdot.github.io/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Hexo Blog">
+<meta property="og:description" content="&nbsp; ​	最近我们的一个项目在找新的硬件平台代替现有的，给到我这边一个新的系统，也是终于看到弃用现在的半成品jetson的希望了。平台更换涉及项目移植，所以需要重新搭建一下开发环境，之前一直的编译都是直接在jetson上编译的，方便是方便，但是有一些不稳定因素。也尝试过在自己虚拟机里搭建交叉编译环境，折腾一两周，能编出来程序，因为要结合算法库的问题跑不起来，只搞了一个半成品。这里借助之前折">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://littleblackdot.github.io/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/osInfo.png">
+<meta property="og:image" content="https://littleblackdot.github.io/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/downloadCrossCompiler.png">
+<meta property="og:image" content="https://littleblackdot.github.io/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/glibcVerOfHost.png">
+<meta property="og:image" content="https://littleblackdot.github.io/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/glibcVerOfCompiler.png">
+<meta property="og:image" content="https://littleblackdot.github.io/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/configureErr1.png">
+<meta property="og:image" content="https://littleblackdot.github.io/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/confiureResult.png">
+<meta property="article:published_time" content="2025-09-12T06:43:28.000Z">
+<meta property="article:modified_time" content="2025-09-17T03:01:35.757Z">
+<meta property="article:author" content="LittleBlackDot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://littleblackdot.github.io/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/osInfo.png">
+
+<link rel="canonical" href="https://littleblackdot.github.io/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>记录一次搭建Qt5交叉编译环境全过程 | Hexo Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">LittleBlackDot's</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://littleblackdot.github.io/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LittleBlackDot">
+      <meta itemprop="description" content="日常杂项笔记">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记录一次搭建Qt5交叉编译环境全过程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-12 14:43:28" itemprop="dateCreated datePublished" datetime="2025-09-12T14:43:28+08:00">2025-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-09-17 11:01:35" itemprop="dateModified" datetime="2025-09-17T11:01:35+08:00">2025-09-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&nbsp;</p>
+<p>​	最近我们的一个项目在找新的硬件平台代替现有的，给到我这边一个新的系统，也是终于看到弃用现在的半成品jetson的希望了。平台更换涉及项目移植，所以需要重新搭建一下开发环境，之前一直的编译都是直接在jetson上编译的，方便是方便，但是有一些不稳定因素。也尝试过在自己虚拟机里搭建交叉编译环境，折腾一两周，能编出来程序，因为要结合算法库的问题跑不起来，只搞了一个半成品。这里借助之前折腾的基础再搭建一次，并记录一下过程。</p>
+<span id="more"></span>
+
+<ul>
+<li><p>参考文档</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://wiki.qt.io/Building_Qt_5_from_Git</span><br><span class="line">https://doc.embedfire.com/linux/rk356x/Qt/zh/latest/lubancat_qt/install/install_arm_2.html</span><br><span class="line">https://blog.csdn.net/xuesong10210/article/details/122102483</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>当前系统版本</p>
+<p><img src="/2025/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BAQt5%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%85%A8%E8%BF%87%E7%A8%8B/osInfo.png" alt="image-20250912145746868"></p>
+</li>
+</ul>
+<h2 id="搭建目标机器环境"><a href="#搭建目标机器环境" class="headerlink" title="搭建目标机器环境"></a>搭建目标机器环境</h2><ul>
+<li><p>安装库和工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"># 安装一些库和工具等,按自己需要安装</span><br><span class="line">sudo apt update</span><br><span class="line"></span><br><span class="line"># x11相关</span><br><span class="line">sudo apt-get install -y libx11-dev freetds-dev libxcb-xinput-dev libpq-dev libiodbc2-dev firebird-dev \</span><br><span class="line">   libxcb1 libxcb1-dev libx11-xcb1 libx11-xcb-dev  \</span><br><span class="line">   libxcb-keysyms1 libxcb-keysyms1-dev libxcb-image0 libxcb-image0-dev libxcb-shm0 libxcb-shm0-dev \</span><br><span class="line">   libxcb-icccm4 libxcb-icccm4-dev libxcb-sync1 libxcb-sync-dev libxcb-render-util0 \</span><br><span class="line">   libxcb-render-util0-dev libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev \</span><br><span class="line">   libxcb-glx0-dev libxi-dev libdrm-dev libxcb-xinerama0 libxcb-xinerama0-dev libatspi2.0-dev \</span><br><span class="line">   libxcursor-dev libxcomposite-dev libxdamage-dev libxss-dev libxtst-dev libpci-dev libcap-dev \</span><br><span class="line">   libxrandr-dev libdirectfb-dev libaudio-dev </span><br><span class="line"></span><br><span class="line"># gstream相关</span><br><span class="line">sudo apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base \</span><br><span class="line">   gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \</span><br><span class="line">   gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools libunwind-dev</span><br><span class="line"></span><br><span class="line"># opengl相关</span><br><span class="line">sudo apt-get install -y  libegl1-mesa-dev libgbm-dev libgles2-mesa-dev libgles2-mesa</span><br><span class="line"></span><br><span class="line">#C/C++ 开发套件</span><br><span class="line">sudo apt-get install gcc g++ gdbserver rsync</span><br><span class="line">sudo apt install build-essential</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 其他等等</span><br><span class="line">sudo apt-get install -y libfreetype6-dev libicu-dev  libasound2-dev libnss3-dev \</span><br><span class="line">libxss-dev libxtst-dev libpci-dev libcap-dev libsrtp2-dev libsrtp2-1 libxrandr-dev libdirectfb-dev \</span><br><span class="line">libaudio-dev libavcodec-dev libavformat-dev libswscale-dev </span><br><span class="line">   </span><br><span class="line">sudo apt-get install git bison python3 gperf pkg-config gdb-multiarch</span><br><span class="line">sudo apt-get install -y libssl-dev libdbus-1-dev libglib2.0-dev  rsyslog  libjpeg-dev</span><br><span class="line">#下面是opengl、xcb相关需要安装的库</span><br><span class="line">sudo apt-get install libxkbcommon-dev libxkbcommon-x11-dev</span><br><span class="line">sudo apt-get install libxext-dev libxfixes-dev </span><br><span class="line"></span><br><span class="line">sudo apt-get install libfontconfig1-dev  #QT中-fontconfig选项的依赖</span><br><span class="line">sudo apt-get install sqlite3 libsqlite3-dev   #解决qt中配置系统数据库的依赖问题，对应-sqlite选项</span><br><span class="line">sudo apt-get install libts-dev      #解决tslib依赖 对应-tslib选项。</span><br><span class="line">sudo apt-get install libjpeg-dev    #-system-jpeg 选项</span><br><span class="line">sudo apt-get install libglib2.0-dev    #-glib 选项</span><br><span class="line">sudo apt-get install sqlite3 libsqlite3-dev   #解决sqlite依赖</span><br><span class="line">sudo apt-get install rsyslog     #-syslog选项</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>转换目标机器sysroot相关动态库路径链接方式</p>
+<p>这一步的目的是可以避免sysroot复制到编译机上还要处理动态库链接失效问题</p>
+<ul>
+<li><p>安装symlinks</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install symlinks</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>转换&#x2F;lib、&#x2F;usr&#x2F;include、 &#x2F;usr&#x2F;lib、&#x2F;opt中的动态库的链接方式为相对路径链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo symlinks -rc /opt</span><br><span class="line">sudo symlinks -rc /lib</span><br><span class="line">sudo symlinks -rc /usr</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="编译机环境搭建"><a href="#编译机环境搭建" class="headerlink" title="编译机环境搭建"></a>编译机环境搭建</h2><ul>
+<li><p>拷贝目标机各类库到编译机（创建目标机sysroot）</p>
+<p>我这里因为目标机是算能的设备所以sysyroot起名为sophon。加–copy-unsafe-links选项是因为单纯拷贝软连接可能会出现sysroot内符号链接失效问题，sysroot的可用性会变差，影响后续编译qt源码</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rsync -avz --rsync-path=&quot;sudo rsync&quot; --copy-unsafe-links --delete linaro@192.168.5.60:/usr/lib sophon/usr/</span><br><span class="line">rsync -avz --rsync-path=&quot;sudo rsync&quot; --copy-unsafe-links --delete linaro@192.168.5.60:/usr/include sophon/usr/</span><br><span class="line">rsync -avz --rsync-path=&quot;sudo rsync&quot; --copy-unsafe-links --delete linaro@192.168.5.60:/opt/sophon sophon/opt/sophon/	</span><br><span class="line">rsync -avz --rsync-path=&quot;sudo rsync&quot; --copy-unsafe-links --delete linaro@192.168.5.60:/usr/libexec sophon/usr/</span><br><span class="line">rsync -avz --rsync-path=&quot;sudo rsync&quot; --copy-unsafe-links --delete linaro@192.168.5.60:/usr/share sophon/usr/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>下载qt5源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://code.qt.io/qt/qt5.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换版本为5.1.5.10</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd qt5</span><br><span class="line">git checkout v5.8.0                                  # checking out the specific release or branch</span><br><span class="line">git submodule update --init --recursive              # updating each submodule to match the supermodule</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载交叉编译器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">## 下载地址</span><br><span class="line">https://developer.arm.com/downloads/-/gnu-a</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/downloadCrossCompiler.png" alt="image-20250915141156689"></p>
+</li>
+<li><p>确定目标机器的glibc版本和交叉编译器的glibc版本是否兼容</p>
+<ul>
+<li>两个glic版本不一兼容后续编译qt源码会有问题，出现编译失败问题</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#查看目标系统glibc版本</span><br><span class="line">strings $$&#123;sysroot&#125;/lib/aarch64-linux-gnu/libc.so.6 | grep GLIBC</span><br><span class="line">##交叉编译工具链glibc版本</span><br><span class="line">strings $$&#123;crossCompilerPath&#125;/aarch64-linux-gnu/libc/lib64/libc.so.6 | grep GLIBC	</span><br><span class="line">		#或</span><br><span class="line">strings $$&#123;crossCompilerPath&#125;/aarch64-none-linux-gnu/libc/lib64/libc.so.6 | grep GLIBC</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>目标机器上的glibc版本</p>
+<p>  <img src="/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/glibcVerOfHost.png" alt="image-20250915142531493"></p>
+</li>
+<li><p>gcc9.2交叉编译器的glibc版本</p>
+<p><img src="/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/glibcVerOfCompiler.png" alt="image-20250915142830400"></p>
+</li>
+<li><p>可以看到这里范围都是2.17–2.30，这个9.2版本的gcc应该是可以作为交叉编译器的版本的。而且选择9.2版本的gcc是因为目标机的gcc版本是9.3在arm官网上能找到和9.3最接近的版本就是9.2版本</p>
+</li>
+<li><p>测试交叉编译器，在目标机器编写hello例然后在编译机器上执行交叉编译，将编译出来的程序拷贝至目标机器上执行，初步验证交叉编译器的可用性。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">## 1.交叉编译hello </span><br><span class="line">/opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++ hello.cpp -o hello</span><br><span class="line">## 2.拷贝hello程序至目标机器</span><br><span class="line">rsync -avz hello linaro@192.168.5.53:/home/linaro/</span><br><span class="line">## 3.目标机器上执行hello，验证hello是否可用</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="交叉编译Qt源码"><a href="#交叉编译Qt源码" class="headerlink" title="交叉编译Qt源码"></a>交叉编译Qt源码</h2><ul>
+<li><p>拷贝qt源码的qtbase&#x2F;mkspecs目录下的编译配置模板为自定义编译配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd $&#123;QtSrc&#125;/qtbase/mkspecs</span><br><span class="line">cp -a linux-aarch64-gnu-g++ linux-sophon-aarch64-gnu-g++</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>修改linux-sophon-aarch64-gnu-g++下的qmake.conf的内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">#</span><br><span class="line"># qmake configuration for building with aarch64-linux-gnu-g++</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">MAKEFILE_GENERATOR      = UNIX</span><br><span class="line">CONFIG                 += incremental</span><br><span class="line">QMAKE_INCREMENTAL_STYLE = sublib</span><br><span class="line"></span><br><span class="line">include(../common/linux.conf)</span><br><span class="line">include(../common/gcc-base-unix.conf)</span><br><span class="line">include(../common/g++-unix.conf)</span><br><span class="line"></span><br><span class="line">QMAKE_LIBDIR_OPENGL_ES2 += $$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu</span><br><span class="line">QMAKE_INCDIR_OPENGL_ES2 += $$[QT_SYSROOT]/usr/include/</span><br><span class="line">QMAKE_LIBS_OPENGL_ES2  += -lGLESv2 -lEGL</span><br><span class="line">#QMAKE_LIBS_OPENGL_ES2  += -lGLESv2 -lEGL -lmali</span><br><span class="line"></span><br><span class="line">QMAKE_INCDIR_OPENGL += $$[QT_SYSROOT]/usr/include/</span><br><span class="line">QMAKE_LIBDIR_OPENGL += $$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu</span><br><span class="line">QMAKE_LIBS_OPENGL      += -lGL -lEGL</span><br><span class="line"></span><br><span class="line">QMAKE_INCDIR_XCB += $$[QT_SYSROOT]/usr/include</span><br><span class="line"></span><br><span class="line">QMAKE_INCDIR_EGL += $$[QT_SYSROOT]/usr/include</span><br><span class="line">QMAKE_LIBDIR_EGL += $$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu</span><br><span class="line">QMAKE_LIBS_EGL         += -lEGL -lGLESv2</span><br><span class="line">#QMAKE_LIBS_EGL         += -lEGL -lGLESv2 -lmali</span><br><span class="line"></span><br><span class="line">QMAKE_INCDIR_FONTCONFIG += $$[QT_SYSROOT]/usr/include</span><br><span class="line"></span><br><span class="line">#QMAKE_CFLAGS            = -march=armv8-a</span><br><span class="line">QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS</span><br><span class="line"></span><br><span class="line">QMAKE_CFLAGS += -I$$[QT_SYSROOT]/usr/include</span><br><span class="line">QMAKE_CFLAGS += -I$$[QT_SYSROOT]/usr/include/aarch64-linux-gnu</span><br><span class="line">QMAKE_CFLAGS += -I$$[QT_SYSROOT]/usr/include/include/aarch64-linux-gnu</span><br><span class="line"></span><br><span class="line">QMAKE_CXXFLAGS += -I$$[QT_SYSROOT]/usr/include</span><br><span class="line">QMAKE_CXXFLAGS += -I$$[QT_SYSROOT]/usr/include/aarch64-linux-gnu</span><br><span class="line">QMAKE_CXXFLAGS += -I$$[QT_SYSROOT]/usr/include/include/aarch64-linux-gnu</span><br><span class="line"></span><br><span class="line">QMAKE_LFLAGS += -Wl,--library-path,$$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu</span><br><span class="line">QMAKE_LFLAGS += -Wl,--library-path,$$[QT_SYSROOT]/lib</span><br><span class="line"></span><br><span class="line">QMAKE_LFLAGS += -L$$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu</span><br><span class="line">QMAKE_LFLAGS += -L$$[QT_SYSROOT]/lib/aarch64-linux-gnu</span><br><span class="line"></span><br><span class="line">QMAKE_LFLAGS += -Wl,-O1 \</span><br><span class="line">                -Wl,-rpath-link,$$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu \</span><br><span class="line">                -Wl,-rpath-link,$$[QT_SYSROOT]/lib/aarch64-linux-gnu \</span><br><span class="line">                -L$$[QT_SYSROOT]/usr/lib/aarch64-linux-gnu \</span><br><span class="line">                -L$$[QT_SYSROOT]/lib/aarch64-linux-gnu</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># modifications to g++.conf</span><br><span class="line">QMAKE_CC                = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc</span><br><span class="line">QMAKE_CXX               = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++</span><br><span class="line">QMAKE_LINK              = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++</span><br><span class="line">QMAKE_LINK_SHLIB        = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++</span><br><span class="line"></span><br><span class="line"># modifications to linux.conf</span><br><span class="line">QMAKE_AR                = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-ar cqs</span><br><span class="line">QMAKE_OBJCOPY           = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-objcopy</span><br><span class="line">QMAKE_NM                = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-nm -P</span><br><span class="line">QMAKE_STRIP             = /opt/crossCompiler/aarch64/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-strip</span><br><span class="line">load(qt_config)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>qt源码下新建build目录并在build下执行configure</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">mkdir build &amp;&amp; cd build</span><br><span class="line">../configure \</span><br><span class="line">     -opensource \</span><br><span class="line">     -confirm-license \</span><br><span class="line">     -sysroot /home/qtEnv/sysroot_aarch64/sophon  \          ##指定sysroot路径</span><br><span class="line">     -xplatform linux-sophon-aarch64-gnu-g++ \				 ##指定使用的编译配置,用前面我们自定义的这个</span><br><span class="line">     -prefix /opt/qt/qt5/qt5.15.10-sophon-aarch64 \          ##编译后qt安装的位置</span><br><span class="line">     -release \</span><br><span class="line">     -nomake tests \</span><br><span class="line">     -nomake examples \</span><br><span class="line">     -make libs \</span><br><span class="line">     -opengl es2 \</span><br><span class="line">     -egl \</span><br><span class="line">     -eglfs \</span><br><span class="line">     -xcb \</span><br><span class="line">     -dbus \</span><br><span class="line">     -sqlite \</span><br><span class="line">     -syslog \</span><br><span class="line">     -fontconfig \</span><br><span class="line">     -pkg-config \</span><br><span class="line">     -tslib \</span><br><span class="line">     -feature-dlopen \</span><br><span class="line">     -skip qtscript \</span><br><span class="line">     -skip qtwebengine \</span><br><span class="line">     -skip qtdocgallery \</span><br><span class="line">     -no-use-gold-linker \</span><br><span class="line">     -v \</span><br><span class="line">     -recheck-all</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>处理configure执行报错</p>
+<ul>
+<li><p>crt库查找失败</p>
+<p><img src="/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/configureErr1.png" alt="image-20250917104843605"></p>
+<p>使用arm的gcc编译器好像就会出现这种问题，其只在sysroot的lib下查找crt文件、但是crt文件一般都是在lib&#x2F;aarch64-linux-gnu 下的，所以需要在lib目录下创建crt文件的链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#进入sysroot中</span><br><span class="line">cd /home/qtEnv/sysroot_aarch64/sophon</span><br><span class="line"># 确保 lib 是指向 usr/lib 的（原始状态）</span><br><span class="line">ls -l lib</span><br><span class="line"># 应该是：lib -&gt; usr/lib</span><br><span class="line"># 进入 lib 目录（即实际是 usr/lib）</span><br><span class="line">cd lib</span><br><span class="line"># 在这里创建指向 aarch64-linux-gnu 下 crt 文件的符号链接</span><br><span class="line">sudo ln -sf aarch64-linux-gnu/crt1.o .</span><br><span class="line">sudo ln -sf aarch64-linux-gnu/crti.o .</span><br><span class="line">sudo ln -sf aarch64-linux-gnu/crtn.o .</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>configure执行成功后执行make等待编译结束然后make install</p>
+</li>
+</ul>
+<p><img src="/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/confiureResult.png" alt="image-20250917105753520"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gmake -j6 #-j6指示使用多线程并行编译，缩短编译完成时间</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>大功搞成，美美编译项目</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/09/11/Jetson-Xavier-%E6%88%AA%E5%9B%BE%E6%8C%87%E5%AE%9A%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/" rel="prev" title="Jetson Xavier Ubuntu18.04 截图指定软件的图形界面">
+      <i class="fa fa-chevron-left"></i> Jetson Xavier Ubuntu18.04 截图指定软件的图形界面
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E7%9B%AE%E6%A0%87%E6%9C%BA%E5%99%A8%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">搭建目标机器环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%9C%BA%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">编译机环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91Qt%E6%BA%90%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">交叉编译Qt源码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LittleBlackDot</p>
+  <div class="site-description" itemprop="description">日常杂项笔记</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LittleBlackDot</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
